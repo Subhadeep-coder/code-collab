@@ -154,7 +154,7 @@ export const ExpandableSidebar = ({ activeTab }) => {
       case "settings":
         return (
           <div>
-            <h2 className="text-sm font-bold mb-2">SETTINGS</h2>
+            <h1 className="text-sm font-bold pt-2 pl-2 pb-2">SETTINGS</h1>
             <div className="space-y-2">
               <div className="hover:bg-[#37373D] p-2 rounded">
                 User Settings
@@ -171,7 +171,7 @@ export const ExpandableSidebar = ({ activeTab }) => {
   };
 
   return (
-    <div className="w-72 bg-[#252526] text-white p-4 overflow-y-auto">
+    <div className="w-60 bg-[#252526] text-white p-1 overflow-y-auto">
       {renderContent()}
     </div>
   );
