@@ -2,11 +2,12 @@ import React from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
+import Sidebar from '../components/Sidebar'
 
 export default function NextPage() {
   return (
     <React.Fragment>
-      <Head>
+      {/* <Head>
         <title>Next - Nextron (with-tailwindcss)</title>
       </Head>
       <div className="grid grid-col-1 text-2xl w-full text-center">
@@ -20,10 +21,8 @@ export default function NextPage() {
           />
         </div>
         <span>⚡ Nextron ⚡</span>
-      </div>
-      <div className="mt-1 w-full flex-wrap flex justify-center">
-        <Link href="/home">Go to home page</Link>
-      </div>
+      </div> */}
+      <Sidebar />
     </React.Fragment>
   )
 }

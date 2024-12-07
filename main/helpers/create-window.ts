@@ -73,7 +73,9 @@ export const createWindow = (
   const win = new BrowserWindow({
     ...state,
     ...options,
+    autoHideMenuBar: true,
     webPreferences: {
+      sandbox: true,
       nodeIntegration: false,
       contextIsolation: true,
       ...options.webPreferences,

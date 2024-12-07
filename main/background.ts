@@ -17,6 +17,7 @@ if (isProd) {
   const mainWindow = createWindow('main', {
     width: 1000,
     height: 600,
+    // show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -27,6 +28,7 @@ if (isProd) {
   } else {
     const port = process.argv[2]
     await mainWindow.loadURL(`http://localhost:${port}/home`)
+    
     mainWindow.webContents.openDevTools()
   }
 })()
