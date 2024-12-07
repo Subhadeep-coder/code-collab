@@ -2,10 +2,6 @@
 
 import React, { useState } from "react";
 import {
-  FileText,
-  Search,
-  GitBranch,
-  Settings,
   ChevronRight,
   ChevronDown,
   UserCog,
@@ -13,6 +9,7 @@ import {
   Bell,
   Mail,
 } from "lucide-react";
+import { SidebarItemsTypes } from "../../utils/contants";
 
 export const ExpandableSidebar = ({ activeTab }) => {
   const [expandedSections, setExpandedSections] = useState({
@@ -30,7 +27,7 @@ export const ExpandableSidebar = ({ activeTab }) => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "user":
+      case SidebarItemsTypes.USER:
         return (
           <div className="flex flex-col h-full">
             <div className="flex items-center p-4 border-b border-[#3C3C3C]">
@@ -87,7 +84,7 @@ export const ExpandableSidebar = ({ activeTab }) => {
             </div>
           </div>
         );
-      case "explorer":
+      case SidebarItemsTypes.EXPLORER:
         return (
           <div>
             <div
@@ -109,7 +106,7 @@ export const ExpandableSidebar = ({ activeTab }) => {
             )}
           </div>
         );
-      case "search":
+      case SidebarItemsTypes.SEARCH:
         return (
           <div>
             <div
@@ -131,7 +128,7 @@ export const ExpandableSidebar = ({ activeTab }) => {
             )}
           </div>
         );
-      case "sourceControl":
+      case SidebarItemsTypes.SOURCE_CONTROL:
         return (
           <div>
             <div
@@ -151,7 +148,7 @@ export const ExpandableSidebar = ({ activeTab }) => {
             )}
           </div>
         );
-      case "settings":
+      case SidebarItemsTypes.SETTINGS:
         return (
           <div>
             <h1 className="text-sm font-bold pt-2 pl-2 pb-2">SETTINGS</h1>
