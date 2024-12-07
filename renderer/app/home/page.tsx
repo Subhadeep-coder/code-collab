@@ -19,7 +19,7 @@ export default function NextPage() {
                         height={256}
                     />
                 </div>
-                <span>⚡ Nextron ⚡</span>
+                <span>⚡ Nextron</span>
             </div>
             <div className="mt-1 w-full flex-wrap flex justify-center">
                 <Link href="/home">Go to home page</Link>
