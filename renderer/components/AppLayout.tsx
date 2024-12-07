@@ -15,5 +15,25 @@ export const AppLayout = ({ children }: Props) => {
         <Terminal />
       </div>
     </div>
+    // <ResizablePanelGroup direction="vertical" className="h-full">
+    //     <ResizablePanel defaultSize={75} minSize={10} maxSize={85}>
+    //       <div className="flex h-full items-center justify-center">
+    //         <Editor
+    //           code={code}
+    //           setCode={setCode}
+    //           fontSize={fontSize}
+    //           setFontSize={setFontSize}
+    //           fontFamily={fontFamily}
+    //           setFontFamily={setFontFamily}
+    //         />
+    //       </div>
+    //     </ResizablePanel>
+    //     <ResizableHandle />
+    //     <ResizablePanel defaultSize={25} minSize={15} maxSize={70}>
+    //       <div className="flex h-full items-center justify-center">
+    //         <OutputScreen output={output}></OutputScreen>
+    //       </div>
+    //     </ResizablePanel>
+    //   </ResizablePanelGroup>
   );
 };
