@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { ExpandableSidebar } from "./ExpandableSidebar";
 import { IconSidebar } from "./IconSidebar";
-import { SidebarItemsTypes } from "../utils/contants";
+import { SidebarItemsTypes } from "../../utils/contants";
 
 const Sidebar = () => {
     const [activeTab, setActiveTab] = useState(SidebarItemsTypes.EXPLORER);

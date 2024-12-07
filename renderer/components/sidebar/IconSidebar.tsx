@@ -1,5 +1,5 @@
 import React from "react";
-import { SidebarItems, SidebarUserItems } from "../utils/contants";
+import { SidebarItems, SidebarUserItems } from "../../utils/contants";
 
 export const IconSidebar = ({ activeTab, onTabChange }) => {
 
