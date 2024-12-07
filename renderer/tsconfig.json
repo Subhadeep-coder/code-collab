@@ -10,6 +10,7 @@
     "node_modules"
   ],
   "compilerOptions": {
+    "target": "ES2024",
     "plugins": [
       {
         "name": "next"

@@ -1,10 +1,11 @@
 "use client";
+import { useState } from "react";
 import { ExpandableSidebar } from "./ExpandableSidebar";
 import { IconSidebar } from "./IconSidebar";
-import { useState } from "react";
+import { SidebarItemsTypes } from "../utils/contants";
 
 const Sidebar = () => {
-    const [activeTab, setActiveTab] = useState('explorer');
+    const [activeTab, setActiveTab] = useState(SidebarItemsTypes.EXPLORER);
   
     return (
       <div className="flex h-screen bg-[#252526]">

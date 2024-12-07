@@ -1,41 +1,12 @@
 import React from "react";
-import { FileText, Search, GitBranch, Settings, UserRound } from "lucide-react";
+import { SidebarItems, SidebarUserItems } from "../utils/contants";
 
 export const IconSidebar = ({ activeTab, onTabChange }) => {
-  const sidebarItems = [
-    {
-      icon: FileText,
-      name: "explorer",
-      tooltip: "Explorer",
-    },
-    {
-      icon: Search,
-      name: "search",
-      tooltip: "Search",
-    },
-    {
-      icon: GitBranch,
-      name: "sourceControl",
-      tooltip: "Source Control",
-    },
-  ];
-  const sidebarUserItems = [
-    {
-      icon: UserRound,
-      name: "user",
-      tooltip: "User",
-    },
-    {
-      icon: Settings,
-      name: "settings",
-      tooltip: "Settings",
-    },
-  ];
 
   return (
     <div className="flex flex-col justify-between h-screen bg-[#1E1E1E]">
       <div className="w-16 bg-[#1E1E1E] flex flex-col items-center py-4 space-y-4">
-        {sidebarItems.map((item) => (
+        {SidebarItems.map((item) => (
           <button
             key={item.name}
             onClick={() => onTabChange(item.name)}
@@ -49,7 +20,7 @@ export const IconSidebar = ({ activeTab, onTabChange }) => {
         ))}
       </div>
       <div className="w-16 bg-[#1E1E1E] flex flex-col items-center py-4 space-y-4">
-        {sidebarUserItems.map((item) => (
+        {SidebarUserItems.map((item) => (
           <button
             key={item.name}
             onClick={() => onTabChange(item.name)}

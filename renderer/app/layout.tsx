@@ -8,7 +8,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body>
+            <body className='h-screen w-screen'>
                 <AppLayout>
                     {children}
                 </AppLayout>
