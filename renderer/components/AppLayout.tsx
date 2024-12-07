@@ -1,6 +1,6 @@
 import React from "react";
-import { CodeSpace } from "./CodeEditor";
 import { Terminal } from "./Terminal";
+import Sidebar from "./Sidebar";
 
 type Props = {
     children: React.ReactNode;
@@ -9,9 +9,9 @@ type Props = {
 export const AppLayout = ({ children }: Props) => {
     return (
         <div className="w-full h-full flex gap-x-2">
-            {children}
+            <Sidebar />
             <div className="h-full w-full flex flex-col gap-y-2">
-                <CodeSpace />
+                {children}
                 <Terminal />
             </div>
         </div>
