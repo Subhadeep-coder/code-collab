@@ -4,12 +4,19 @@ import * as Y from "yjs";
 import { LiveblocksYjsProvider } from "@liveblocks/yjs";
 import { useRoom } from "@liveblocks/react/suspense";
 import { useCallback, useEffect, useState } from "react";
-import { Editor } from "@monaco-editor/react";
+// import { Editor } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { MonacoBinding } from "y-monaco";
 import { Awareness } from "y-protocols/awareness";
 import { Cursors } from "./Cursors";
 import { Toolbar } from "./Toolbar";
+import dynamic from "next/dynamic";
+
+const Editor = dynamic(
+    () => import('@monaco-editor/react').then((mod) => mod.Editor),
+    { ssr: false }
+);
+
 
 // Collaborative code editor with undo/redo, live cursors, and live avatars
 export function CollaborativeEditor() {
@@ -19,6 +26,10 @@ export function CollaborativeEditor() {
 
     // Set up Liveblocks Yjs provider and attach Monaco editor
     useEffect(() => {
+        if (typeof window === "undefined") {
+            return; // Prevent execution on the server
+        }
+        
         let yProvider: LiveblocksYjsProvider;
         let yDoc: Y.Doc;
         let binding: MonacoBinding;
@@ -52,9 +63,9 @@ export function CollaborativeEditor() {
     return (
         <div className="flex flex-col relative border rounded-xl bg-white w-full h-full overflow-hidden">
             {provider ? <Cursors yProvider={provider} /> : null}
-            <div className="flex justify-between items-center">
+            {/* <div className="flex justify-between items-center">
                 <div>{editorRef ? <Toolbar editor={editorRef} /> : null}</div>
-            </div>
+            </div> */}
             <div className="relative grow">
                 <Editor
                     onMount={handleOnMount}

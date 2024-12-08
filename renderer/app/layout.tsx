@@ -1,4 +1,5 @@
 import { AppLayout } from '../components/AppLayout';
+import { AuthProvider } from '../providers/auth-provider';
 import './globals.css';
 
 export default function RootLayout({
@@ -9,9 +10,11 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className='h-screen w-screen'>
-                <AppLayout>
-                    {children}
-                </AppLayout>
+                <AuthProvider>
+                    <AppLayout>
+                        {children}
+                    </AppLayout>
+                </AuthProvider>
             </body>
         </html>
     )

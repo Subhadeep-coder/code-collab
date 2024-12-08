@@ -13,11 +13,13 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "@electron-toolkit/utils": "^3.0.0",
     "@liveblocks/client": "^2.13.1",
     "@liveblocks/node": "^2.13.1",
     "@liveblocks/react": "^2.13.1",
     "@liveblocks/yjs": "^2.13.1",
     "@monaco-editor/react": "^4.6.0",
+    "appwrite": "^14.0.1",
     "electron-serve": "^1.3.0",
     "electron-store": "^8.2.0",
     "lucide-react": "^0.468.0",
