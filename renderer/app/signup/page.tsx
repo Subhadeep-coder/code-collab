@@ -16,8 +16,7 @@ const SignupPage = (props: Props) => {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const token = await register(email, password, name);
-            window.context.login({ email, token, password });
+            await register(email, password, name);
             router.push('/');
         } catch (error) {
             // Handle login error
@@ -58,7 +57,7 @@ const SignupPage = (props: Props) => {
                     disabled={isLoading}
                     className="w-full bg-blue-500 text-white p-2 rounded"
                 >
-                    {isLoading ? 'Logging in...' : 'Login'}
+                    {isLoading ? 'Logging in...' : 'Signup'}
                 </button>
             </form>
         </div>

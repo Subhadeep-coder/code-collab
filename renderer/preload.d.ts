@@ -5,6 +5,7 @@ declare global {
   interface Window {
     context: {
       locale: string,
+      register: Login,
       login: Login,
       logout: Logout,
       getDetails: GetUserDetails

@@ -13,8 +13,7 @@ export default function LoginPage() {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const token = await login(email, password);
-            window.context.login({ email, password, token });
+            await login(email, password);
             router.push('/');
         } catch (error) {
             // Handle login error

@@ -9,6 +9,7 @@ if (!process.contextIsolated) {
 try {
   contextBridge.exposeInMainWorld("context", {
     locale: navigator.language,
+    register: (...args: Parameters<Login>) => ipcRenderer.invoke("user:register", ...args),
     login: (...args: Parameters<Login>) => ipcRenderer.invoke("user:login", ...args),
     logout: (...args: Parameters<Logout>) => ipcRenderer.invoke("user:logout", ...args),
     getDetails: (...args: Parameters<GetUserDetails>) => ipcRenderer.invoke("user:get-details", ...args),

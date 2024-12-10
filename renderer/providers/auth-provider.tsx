@@ -11,17 +11,17 @@ import { authService, User } from '../lib/auth-service';
 
 interface AuthContextType {
     user: User | null;
-    login: (email: string, password: string) => Promise<string>;
+    login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
-    register: (email: string, password: string, name: string) => Promise<string>;
+    register: (email: string, password: string, name: string) => Promise<void>;
     isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
     user: null,
-    login: async () => "",
+    login: async () => { },
     logout: async () => { },
-    register: async () => "",
+    register: async () => { },
     isLoading: true
 });
 
@@ -30,10 +30,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const checkUser = async () => {
+        const checkUser = async (): Promise<void> => {
             try {
                 const currentUser = await authService.getCurrentUser();
-                setUser(currentUser);
+                setUser({
+                    id: currentUser.userId,
+                    email: currentUser.email,
+                    name: currentUser.name,
+                    token: currentUser.token
+                });
             } catch (error) {
                 setUser(null);
             } finally {
@@ -44,18 +49,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         checkUser();
     }, []);
 
-    const login = async (email: string, password: string) => {
+    const login = async (email: string, password: string): Promise<void> => {
         setIsLoading(true);
         try {
             const loggedInUser = await authService.login(email, password);
             setUser(loggedInUser);
-            return loggedInUser.token;
         } finally {
             setIsLoading(false);
         }
     };
 
-    const logout = async () => {
+    const logout = async (): Promise<void> => {
         setIsLoading(true);
         try {
             await authService.logout();
@@ -65,12 +69,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
     };
 
-    const register = async (email: string, password: string, name: string) => {
+    const register = async (email: string, password: string, name: string): Promise<void> => {
         setIsLoading(true);
         try {
             const registeredUser = await authService.register(email, password, name);
             setUser(registeredUser);
-            return registeredUser.token;
         } finally {
             setIsLoading(false);
         }

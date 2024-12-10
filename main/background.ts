@@ -1,10 +1,12 @@
 import path from 'path'
 import { app, BrowserWindow, ipcMain } from 'electron'
 import serve from 'electron-serve'
-import { createWindow } from './helpers'
+import { createWindow, electronAuthService } from './helpers'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
-import { getLoginStatus, login, logout } from './helpers/auth-functions'
 import { GetUserDetails, Login, Logout } from './types/auth-functions'
+import dotenv from 'dotenv';
+
+
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -18,6 +20,7 @@ if (isProd) {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
+
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
@@ -29,9 +32,10 @@ app.whenReady().then(async () => {
   })
 
   // ipcMain.handle("get:notes", (_, ...args: Parameters<GetNotes>) => getNotes(...args));
-  ipcMain.handle("user:login", (_, ...args: Parameters<Login>) => login(...args));
-  ipcMain.handle("user:logout", (_, args: Parameters<Logout>) => logout(...args));
-  ipcMain.handle("user:get-details", (_, args: Parameters<GetUserDetails>) => getLoginStatus(...args));
+  ipcMain.handle("user:register", (_, ...args: Parameters<Login>) => electronAuthService.register(...args));
+  ipcMain.handle("user:login", (_, ...args: Parameters<Login>) => electronAuthService.login(...args));
+  ipcMain.handle("user:logout", (_, ...args: Parameters<Logout>) => electronAuthService.logout(...args));
+  ipcMain.handle("user:get-details", (_, ...args: Parameters<GetUserDetails>) => electronAuthService.getCurrentUser(...args));
 
   // IPC test
   // ipcMain.on('ping', () => console.log('pong'))

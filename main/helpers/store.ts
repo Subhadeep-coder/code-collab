@@ -3,6 +3,7 @@ import path from 'path';
 import os from 'os';
 import fs from 'fs';
 import { UserDetails } from '../types/auth-functions';
+import { SupportedStorage } from '@supabase/supabase-js';
 
 
 // Create a custom config path in user's home directory
@@ -55,3 +56,15 @@ export const authStore = {
         return !!userStore.get('token');
     }
 };
+
+export const supabaseStorage: SupportedStorage = {
+    getItem: (key: string) => {
+        return userStore.get(key);
+    },
+    setItem: (key: string, value: any) => {
+        userStore.set(key, value);
+    },
+    removeItem: (key: keyof UserDetails) => {
+        userStore.delete(key);
+    }
+}
