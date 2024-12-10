@@ -80,6 +80,10 @@ export const createWindow = (
       contextIsolation: true,
       ...options.webPreferences,
     },
+  });
+
+  win.on('ready-to-show', () => {
+    win.show()
   })
 
   win.on('close', saveState)

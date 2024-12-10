@@ -1,20 +1,19 @@
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
+import { contextBridge, ipcRenderer } from "electron";
+import { GetUserDetails, Login, Logout } from "./types/auth-functions";
 
-const handler = {
-  send(channel: string, value: unknown) {
-    ipcRenderer.send(channel, value)
-  },
-  on(channel: string, callback: (...args: unknown[]) => void) {
-    const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
-      callback(...args)
-    ipcRenderer.on(channel, subscription)
-
-    return () => {
-      ipcRenderer.removeListener(channel, subscription)
-    }
-  },
+if (!process.contextIsolated) {
+  throw new Error(`contextIsolation must be enabled in the BrowserWindow`);
 }
 
-contextBridge.exposeInMainWorld('ipc', handler)
 
-export type IpcHandler = typeof handler
+try {
+  contextBridge.exposeInMainWorld("context", {
+    locale: navigator.language,
+    register: (...args: Parameters<Login>) => ipcRenderer.invoke("user:register", ...args),
+    login: (...args: Parameters<Login>) => ipcRenderer.invoke("user:login", ...args),
+    logout: (...args: Parameters<Logout>) => ipcRenderer.invoke("user:logout", ...args),
+    getDetails: (...args: Parameters<GetUserDetails>) => ipcRenderer.invoke("user:get-details", ...args),
+  })
+} catch (error) {
+  console.log(error);
+}

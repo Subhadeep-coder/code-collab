@@ -10,6 +10,8 @@ import {
   Mail,
 } from "lucide-react";
 import { SidebarItemsTypes } from "../../utils/contants";
+import { UserItem } from "./UserItem";
+import { Explorer } from "./Explorer";
 
 export const ExpandableSidebar = ({ activeTab }) => {
   const [expandedSections, setExpandedSections] = useState({
@@ -29,82 +31,11 @@ export const ExpandableSidebar = ({ activeTab }) => {
     switch (activeTab) {
       case SidebarItemsTypes.USER:
         return (
-          <div className="flex flex-col h-full">
-            <div className="flex items-center p-4 border-b border-[#3C3C3C]">
-              <div className="w-12 h-12 bg-blue-500 rounded-full mr-4 flex items-center justify-center text-white font-bold">
-                JD
-              </div>
-              <div>
-                <h2 className="text-sm font-bold">John Doe</h2>
-                <p className="text-xs text-[#959595]">Software Engineer</p>
-              </div>
-            </div>
-
-            <div className="p-4">
-              <div className="space-y-2">
-                <h3 className="text-xs font-bold text-[#959595] mb-2">
-                  ACCOUNT
-                </h3>
-                <div className="flex items-center hover:bg-[#37373D] p-2 rounded cursor-pointer">
-                  <UserCog size={16} className="mr-3 text-[#959595]" />
-                  <span className="text-sm">Edit Profile</span>
-                </div>
-                <div className="flex items-center hover:bg-[#37373D] p-2 rounded cursor-pointer">
-                  <Bell size={16} className="mr-3 text-[#959595]" />
-                  <span className="text-sm">Notifications</span>
-                  <span className="ml-auto bg-red-500 text-white text-xs px-2 rounded-full">
-                    3
-                  </span>
-                </div>
-              </div>
-
-              <div className="space-y-2 mt-4">
-                <h3 className="text-xs font-bold text-[#959595] mb-2">
-                  COMMUNICATION
-                </h3>
-                <div className="flex items-center hover:bg-[#37373D] p-2 rounded cursor-pointer">
-                  <Mail size={16} className="mr-3 text-[#959595]" />
-                  <span className="text-sm">Messages</span>
-                  <span className="ml-auto bg-green-500 text-white text-xs px-2 rounded-full">
-                    2
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-4 border-t border-[#3C3C3C] pt-4">
-                <div
-                  className="flex items-center hover:bg-[#37373D] p-2 rounded cursor-pointer text-red-400"
-                  onClick={() => {
-                    /* Logout logic */
-                  }}>
-                  <LogOut size={16} className="mr-3" />
-                  <span className="text-sm">Logout</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <UserItem />
         );
       case SidebarItemsTypes.EXPLORER:
         return (
-          <div>
-            <div
-              className="flex items-center cursor-pointer hover:bg-[#2C2C2C] p-1"
-              onClick={() => toggleSection("explorer")}>
-              {expandedSections.explorer ? (
-                <ChevronDown size={16} />
-              ) : (
-                <ChevronRight size={16} />
-              )}
-              <span className="ml-2 text-sm">EXPLORER</span>
-            </div>
-            {expandedSections.explorer && (
-              <div className="pl-4 text-sm">
-                <div className="hover:bg-[#37373D] p-1">📁 project-folder</div>
-                <div className="hover:bg-[#37373D] p-1">📄 README.md</div>
-                <div className="hover:bg-[#37373D] p-1">📄 package.json</div>
-              </div>
-            )}
-          </div>
+          <Explorer />
         );
       case SidebarItemsTypes.SEARCH:
         return (

@@ -4,7 +4,7 @@ import { ReactNode, useMemo } from "react";
 import { RoomProvider } from "@liveblocks/react/suspense";
 import { useSearchParams } from "next/navigation";
 import { ClientSideSuspense } from "@liveblocks/react";
-import { Loading } from "./Loading";
+import { Loading } from "../Loading";
 
 export function Room({ children }: { children: ReactNode }) {
     const roomId = useExampleRoomId("liveblocks:examples:nextjs-yjs-monaco");
