@@ -13,7 +13,7 @@ export const NormalCodeEditor = () => {
     return (
         <Editor
             height="100%"
-            defaultLanguage="typescript"
+            defaultLanguage="java"
             defaultValue="// Start coding here..."
             options={{
                 minimap: { enabled: false },

@@ -26,7 +26,7 @@ export const UserItem = () => {
     
     if (!user) {
         return (
-            <div className="flex flex-col h-full justify-center items-center p-4">
+            <div className="justify-center flex flex-col h-full  items-center p-4">
                 <div className="space-y-4 w-full">
                     <Link
                         href="/login"

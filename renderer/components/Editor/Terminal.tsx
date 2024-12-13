@@ -7,7 +7,7 @@ type Props = {
 
 export const Terminal = (props: Props) => {
     return (
-        <div className='border-t border-gray-500 bg-[#1e1e1e] text-white min-h-[200px] h-[200px] w-full overflow-auto p-2'>
+        <div className='border-t border-gray-500 bg-[#1e1e1e] text-white min-h-[200px] h-[400px] w-full  overflow-auto p-2'>
             <div className="terminal-header flex justify-between items-center text-sm mb-2">
                 <div className="tabs flex space-x-2">
                     <span className="active-tab">Terminal</span>
