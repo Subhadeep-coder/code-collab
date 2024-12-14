@@ -57,3 +57,15 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-[#555] rounded-md;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}

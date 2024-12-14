@@ -1,27 +1,82 @@
-// terminal.tsx
-import React from 'react'
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
+import { Terminal as XTerminal } from "@xterm/xterm";
+import { FitAddon } from "@xterm/addon-fit";
+import "@xterm/xterm/css/xterm.css";
 
 type Props = {
-    
+  className?: string;
 };
 
-export const Terminal = (props: Props) => {
-    return (
-        <div className='border-t border-gray-500 bg-[#1e1e1e] text-white min-h-[200px] h-[400px] w-full  overflow-auto p-2'>
-            <div className="terminal-header flex justify-between items-center text-sm mb-2">
-                <div className="tabs flex space-x-2">
-                    <span className="active-tab">Terminal</span>
-                    <span>Debug Console</span>
-                </div>
-                <div className="terminal-actions flex space-x-2">
-                    <button className="hover:bg-gray-700 p-1">+</button>
-                    <button className="hover:bg-gray-700 p-1">x</button>
-                </div>
-            </div>
-            <div className="terminal-content overflow-y-auto">
-                {/* Terminal content goes here */}
-                <p className="text-gray-400">$</p>
-            </div>
-        </div>
-    )
-}
+export const Terminal: React.FC<Props> = ({ className }) => {
+  const terminalRef = useRef<HTMLDivElement>(null);
+  const [terminal, setTerminal] = useState<XTerminal | null>(null);
+  const [fitAddon, setFitAddon] = useState<FitAddon | null>(null);
+
+  useEffect(() => {
+    if (!terminalRef.current) return;
+
+    const newTerminal = new XTerminal({
+      cursorBlink: true,
+      fontSize: 14,
+      fontFamily: '"Cascadia Code", Menlo, monospace',
+      theme: {
+        background: "#1e1e1e",
+      },
+    });
+
+    const newFitAddon = new FitAddon();
+    newTerminal.loadAddon(newFitAddon);
+
+    newTerminal.open(terminalRef.current);
+    newFitAddon.fit();
+
+    setTerminal(newTerminal);
+    setFitAddon(newFitAddon);
+
+    newTerminal.writeln("Welcome to the terminal!");
+    newTerminal.writeln('Type "help" for a list of commands.');
+
+    return () => {
+      newTerminal.dispose();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!terminal || !fitAddon) return;
+
+    const handleResize = () => {
+      fitAddon.fit();
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [terminal, fitAddon]);
+
+  useEffect(() => {
+    if (!terminal) return;
+
+    terminal.onData((data) => {
+      // Here you can handle the input data
+      console.log("Terminal input:", data);
+
+      // Echo the input back to the terminal
+      terminal.write(data);
+
+      // Example command handling
+      if (data === "\r") {
+        // Enter key
+        terminal.writeln("");
+        terminal.write("\r\n$ ");
+      }
+    });
+  }, [terminal]);
+
+  return (
+    <div
+      ref={terminalRef}
+      className={`w-full h-full overflow-hidden bg-[#1e1e1e] ${className}`}
+    />
+  );
+};

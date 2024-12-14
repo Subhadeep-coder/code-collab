@@ -1,14 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  ChevronRight,
-  ChevronDown,
-  UserCog,
-  LogOut,
-  Bell,
-  Mail,
-} from "lucide-react";
+import { ChevronRight, ChevronDown, UserCog, LogOut, Bell, Mail } from 'lucide-react';
 import { SidebarItemsTypes } from "../../utils/contants";
 import { UserItem } from "./UserItem";
 import { Explorer } from "./Explorer";
@@ -30,19 +23,16 @@ export const ExpandableSidebar = ({ activeTab }) => {
   const renderContent = () => {
     switch (activeTab) {
       case SidebarItemsTypes.USER:
-        return (
-          <UserItem />
-        );
+        return <UserItem />;
       case SidebarItemsTypes.EXPLORER:
-        return (
-          <Explorer />
-        );
+        return <Explorer />;
       case SidebarItemsTypes.SEARCH:
         return (
           <div>
             <div
               className="flex items-center cursor-pointer hover:bg-[#2C2C2C] p-1"
-              onClick={() => toggleSection("search")}>
+              onClick={() => toggleSection("search")}
+            >
               {expandedSections.search ? (
                 <ChevronDown size={16} />
               ) : (
@@ -64,7 +54,8 @@ export const ExpandableSidebar = ({ activeTab }) => {
           <div>
             <div
               className="flex items-center cursor-pointer hover:bg-[#2C2C2C] p-1"
-              onClick={() => toggleSection("sourceControl")}>
+              onClick={() => toggleSection("sourceControl")}
+            >
               {expandedSections.sourceControl ? (
                 <ChevronDown size={16} />
               ) : (
@@ -84,9 +75,7 @@ export const ExpandableSidebar = ({ activeTab }) => {
           <div>
             <h1 className="text-sm font-bold pt-2 pl-2 pb-2">SETTINGS</h1>
             <div className="space-y-2">
-              <div className="hover:bg-[#37373D] p-2 rounded">
-                User Settings
-              </div>
+              <div className="hover:bg-[#37373D] p-2 rounded">User Settings</div>
               <div className="hover:bg-[#37373D] p-2 rounded">
                 Workspace Settings
               </div>
@@ -99,8 +88,9 @@ export const ExpandableSidebar = ({ activeTab }) => {
   };
 
   return (
-    <div className="w-60 bg-[#252526] text-white p-1 overflow-y-auto">
-      {renderContent()}
+    <div className="h-full flex-1 bg-[#252526] text-white overflow-y-auto">
+      <div className="p-2">{renderContent()}</div>
     </div>
   );
 };
+

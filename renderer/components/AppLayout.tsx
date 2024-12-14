@@ -1,11 +1,12 @@
 import React from "react";
-import { Terminal } from "./Editor/Terminal";
 import Sidebar from "./sidebar/Sidebar";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "./ui/resizable";
+import { Terminal } from "./Editor/Terminal";
+import { EnhancedCodeEditor } from "./Editor/NormalEditor";
 
 type Props = {
   children: React.ReactNode;
@@ -13,22 +14,24 @@ type Props = {
 
 export const AppLayout = ({ children }: Props) => {
   return (
-    <div className="w-full h-full flex gap-x-2">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden gap-y-3">
-        <ResizablePanelGroup direction="vertical" className="h-full">
-          <ResizablePanel defaultSize={75} minSize={10} maxSize={85}>
-            {children}
-          </ResizablePanel>
-          <ResizableHandle />
-          <ResizablePanel defaultSize={25} minSize={15} maxSize={70}>
-            <div className="flex h-full items-center justify-center">
-              <Terminal />
+    <ResizablePanelGroup direction="horizontal" className="w-full h-full bg-[#1e1e1e]">
+      <ResizablePanel defaultSize={15} minSize={15} maxSize={30}>
+        <Sidebar />
+      </ResizablePanel>
+      <ResizableHandle />
+      <ResizablePanel defaultSize={80}>
+        <ResizablePanelGroup direction="vertical" className="h-full bg-[#1e1e1e]">
+          <ResizablePanel defaultSize={75} minSize={30} maxSize={85}>
+            <div className="h-full overflow-auto">
+              <EnhancedCodeEditor />
             </div>
           </ResizablePanel>
+          <ResizableHandle />
+          <ResizablePanel defaultSize={25} minSize={15} maxSize={70} className="bg-[#1e1e1e]">
+            <Terminal className="h-full" />
+          </ResizablePanel>
         </ResizablePanelGroup>
-      </div>
-    </div>
-
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 };
