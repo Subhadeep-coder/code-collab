@@ -21,10 +21,8 @@ export const AppLayout = ({ children }: Props) => {
       <ResizableHandle />
       <ResizablePanel defaultSize={80}>
         <ResizablePanelGroup direction="vertical" className="h-full bg-[#1e1e1e]">
-          <ResizablePanel defaultSize={75} minSize={30} maxSize={85}>
-            <div className="h-full overflow-auto">
-              <EnhancedCodeEditor />
-            </div>
+          <ResizablePanel defaultSize={75} minSize={30} maxSize={85} className="min-h-0">
+            <EnhancedCodeEditor />
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel defaultSize={25} minSize={15} maxSize={70} className="bg-[#1e1e1e]">

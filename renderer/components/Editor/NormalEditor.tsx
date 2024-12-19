@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import {
@@ -41,22 +40,24 @@ export const EnhancedCodeEditor: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#1e1e1e]">
-      <div className="flex items-center justify-between p-2 border-b border-[#3C3C3C] bg-[#252526]">
+    <div className="flex flex-col h-full min-h-0 bg-[#1e1e1e]">
+      <div className="flex items-center justify-between p-2 border-b border-[#3C3C3C] bg-[#252526] shrink-0">
         <div className="flex items-center space-x-2">
           <Select value={language} onValueChange={setLanguage}>
             <SelectTrigger className="h-8 w-[180px] border-[#3C3C3C] bg-[#3C3C3C] text-white">
               <SelectValue placeholder="Select language" />
             </SelectTrigger>
             <SelectContent className="bg-[#252526] border-[#3C3C3C]">
-              {languages.map((lang) => (
-                <SelectItem
-                  key={lang.value}
-                  value={lang.value}
-                  className="text-white hover:bg-[#37373D] focus:bg-[#37373D]">
-                  {lang.label}
-                </SelectItem>
-              ))}
+              {
+                languages.map((lang) => (
+                  <SelectItem
+                    key={lang.value}
+                    value={lang.value}
+                    className="text-white hover:bg-[#37373D] focus:bg-[#37373D]">
+                    {lang.label}
+                  </SelectItem>
+                ))
+              }
             </SelectContent>
           </Select>
           <Select value={theme} onValueChange={setTheme}>
@@ -64,14 +65,16 @@ export const EnhancedCodeEditor: React.FC = () => {
               <SelectValue placeholder="Theme" />
             </SelectTrigger>
             <SelectContent className="bg-[#252526] border-[#3C3C3C]">
-              {themes.map((t) => (
-                <SelectItem
-                  key={t.value}
-                  value={t.value}
-                  className="text-white hover:bg-[#37373D] focus:bg-[#37373D]">
-                  {t.label}
-                </SelectItem>
-              ))}
+              {
+                themes.map((t) => (
+                  <SelectItem
+                    key={t.value}
+                    value={t.value}
+                    className="text-white hover:bg-[#37373D] focus:bg-[#37373D]">
+                    {t.label}
+                  </SelectItem>
+                ))
+              }
             </SelectContent>
           </Select>
         </div>
@@ -95,7 +98,7 @@ export const EnhancedCodeEditor: React.FC = () => {
           </Button>
         </div>
       </div>
-      <div className="flex-grow ">
+      <div className="flex-grow min-h-0 mb-4">
         <Editor
           height="100%"
           language={language}
@@ -106,15 +109,16 @@ export const EnhancedCodeEditor: React.FC = () => {
             fontSize: fontSize,
             scrollBeyondLastLine: false,
             wordWrap: "on",
-            padding: { top: 10 },
+            padding: { top: 10, bottom: 10 },
             lineNumbers: "on",
             renderLineHighlight: "all",
             contextmenu: true,
             automaticLayout: true,
           }}
-          className="w-full h-full overflow-x-hidden"
         />
       </div>
     </div>
   );
 };
+
+export default EnhancedCodeEditor;
