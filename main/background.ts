@@ -48,7 +48,7 @@ app.whenReady().then(async () => {
       preload: path.join(__dirname, 'preload.js'),
     },
   })
-
+  mainWindow.maximize();
   if (isProd) {
     await mainWindow.loadURL('app://./')
   } else {
