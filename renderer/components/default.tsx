@@ -277,7 +277,6 @@ interface WelcomePageProps {
 }
 
 export default function WelcomePage({ onClose }: WelcomePageProps) {
-  const [showOnStartup, setShowOnStartup] = useState(true)
   const [recentProjects, setRecentProjects] = useState<RecentItem[]>([
     {
       name: "frontend-project",
@@ -336,15 +335,6 @@ export default function WelcomePage({ onClose }: WelcomePageProps) {
       description: "Get started with a guided tutorial",
     },
   ]
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShowOnStartup(e.target.checked)
-    if (!e.target.checked) {
-      localStorage.setItem("hideWelcomePage", "true")
-    } else {
-      localStorage.removeItem("hideWelcomePage")
-    }
-  }
 
   const handleItemClick = () => {
     onClose()
