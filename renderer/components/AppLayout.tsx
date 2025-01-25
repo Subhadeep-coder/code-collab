@@ -1,18 +1,41 @@
-import React from "react";
-import Sidebar from "./sidebar/Sidebar";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "./ui/resizable";
-import { Terminal } from "./Editor/Terminal";
-import { EnhancedCodeEditor } from "./Editor/NormalEditor";
+"use client"
+
+import type React from "react"
+import { useState, useEffect } from "react"
+import Sidebar from "./sidebar/Sidebar"
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "./ui/resizable"
+import { Terminal } from "./Editor/Terminal"
+import { EnhancedCodeEditor } from "./Editor/EnhancedCodeEditor"
+import WelcomePage from "./default"
 
 type Props = {
-  children: React.ReactNode;
-};
+  children: React.ReactNode
+}
 
 export const AppLayout = ({ children }: Props) => {
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState<boolean>(true)
+  const [showWelcomePage, setShowWelcomePage] = useState<boolean>(true)
+
+  const handleWelcomePageClose = () => {
+    setShowWelcomePage(false)
+  }
+
+  // If it's first time or welcome page is enabled, show welcome page
+  if (isFirstTimeUser || showWelcomePage) {
+    return (
+      <ResizablePanelGroup direction="horizontal" className="w-full h-full bg-[#1e1e1e]">
+        <ResizablePanel defaultSize={25} minSize={15} maxSize={30}>
+          <Sidebar />
+        </ResizablePanel>
+        <ResizableHandle />
+        <ResizablePanel defaultSize={80}>
+          <WelcomePage   onClose={handleWelcomePageClose} />
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    )
+  }
+
+  // Otherwise show the editor layout
   return (
     <ResizablePanelGroup direction="horizontal" className="w-full h-full bg-[#1e1e1e]">
       <ResizablePanel defaultSize={15} minSize={15} maxSize={30}>
@@ -31,5 +54,5 @@ export const AppLayout = ({ children }: Props) => {
         </ResizablePanelGroup>
       </ResizablePanel>
     </ResizablePanelGroup>
-  );
-};
+  )
+}

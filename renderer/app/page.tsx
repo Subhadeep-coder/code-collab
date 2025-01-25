@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { CodeSpace } from "../components/Editor/CodeEditor";
 import ExtraActivities from "../components/ExtraActivities";
-import { EnhancedCodeEditor } from "../components/Editor/NormalEditor";
+import { EnhancedCodeEditor } from "../components/Editor/EnhancedCodeEditor";
 import { CollaborativeEditor } from "../components/Editor/CollaborativeEditor";
 import { AppLayout } from "../components/AppLayout";
 

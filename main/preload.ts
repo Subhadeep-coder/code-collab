@@ -26,6 +26,7 @@ try {
 declare global {
   interface Window {
     context: {
+      logout(): unknown;
       openFolder: () => Promise<string | undefined>;
       openFile: () => Promise<string | undefined>;
     };
