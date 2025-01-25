@@ -12,7 +12,7 @@ export const AppLayout = ({ children }: Props) => {
 
   return (
     <ResizablePanelGroup direction="horizontal" className="w-full h-full bg-[#1e1e1e]">
-      <ResizablePanel defaultSize={15} minSize={15} maxSize={30}>
+      <ResizablePanel defaultSize={25} minSize={15} maxSize={30}>
         <Sidebar />
       </ResizablePanel>
       <ResizableHandle />
