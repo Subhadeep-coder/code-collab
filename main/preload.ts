@@ -16,19 +16,10 @@ try {
       ipcRenderer.invoke("user:logout", ...args),
     getDetails: (...args: Parameters<GetUserDetails>) =>
       ipcRenderer.invoke("user:get-details", ...args),
-    openFolder: () => ipcRenderer.invoke("open-folder"),
-    openFile: () => ipcRenderer.invoke("open-file"),
+    createFile: (...args: any) => ipcRenderer.invoke("file:create", ...args),
+    openFile: (...args: any) => ipcRenderer.invoke("file:open", ...args),
+    openFolder: (...args: any) => ipcRenderer.invoke("folder:open", ...args),
   });
 } catch (error) {
   console.log(error);
-}
-
-declare global {
-  interface Window {
-    context: {
-      logout(): unknown;
-      openFolder: () => Promise<string | undefined>;
-      openFile: () => Promise<string | undefined>;
-    };
-  }
 }

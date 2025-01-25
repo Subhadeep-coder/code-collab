@@ -20,12 +20,14 @@ export const Explorer = (props: Props) => {
 
   const handleOpenFolder = async () => {
     const result = await window.context.openFolder();
-    setFolderPath(result || 'No folder selected');
+    console.log("Open Folder Result: ", result);
+    // setFolderPath(result || 'No folder selected');
   };
 
   const handleOpenFile = async () => {
     const result = await window.context.openFile();
-    setFilePath(result || 'No file selected');
+    console.log('Open File Result: ', result);
+    // setFilePath(result || 'No file selected');
   };
 
   return (
