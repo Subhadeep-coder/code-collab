@@ -40,7 +40,7 @@ export const EnhancedCodeEditor: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full min-h-0 bg-[#1e1e1e]">
+    <div className="flex flex-col w-full h-full min-h-0 bg-[#1e1e1e]">
       <div className="flex items-center justify-between p-2 border-b border-[#3C3C3C] bg-[#252526] shrink-0">
         <div className="flex items-center space-x-2">
           <Select value={language} onValueChange={setLanguage}>
@@ -98,7 +98,7 @@ export const EnhancedCodeEditor: React.FC = () => {
           </Button>
         </div>
       </div>
-      <div className="flex-grow min-h-0 mb-4">
+      <div className="flex-grow min-h-0">
         <Editor
           height="100%"
           language={language}
