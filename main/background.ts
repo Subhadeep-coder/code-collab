@@ -1,5 +1,5 @@
 import path from 'path'
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain } from 'electron'
 import serve from 'electron-serve'
 import { createWindow, electronAuthService } from './helpers'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
@@ -37,6 +37,19 @@ app.whenReady().then(async () => {
   ipcMain.handle("user:logout", (_, ...args: Parameters<Logout>) => electronAuthService.logout(...args));
   ipcMain.handle("user:get-details", (_, ...args: Parameters<GetUserDetails>) => electronAuthService.getCurrentUser(...args));
 
+  ipcMain.handle('open-folder', async () => {
+    const result = await dialog.showOpenDialog(mainWindow!, {
+      properties: ['openDirectory'],
+    });
+    return result.filePaths[0]; // Return the selected folder path
+  });
+
+  ipcMain.handle('open-file', async () => {
+    const result = await dialog.showOpenDialog(mainWindow!, {
+      properties: ['openFile'],
+    });
+    return result.filePaths[0]; // Return the selected file path
+  });
   // IPC test
   // ipcMain.on('ping', () => console.log('pong'))
 
@@ -48,7 +61,9 @@ app.whenReady().then(async () => {
       preload: path.join(__dirname, 'preload.js'),
     },
   })
+
   mainWindow.maximize();
+  
   if (isProd) {
     await mainWindow.loadURL('app://./')
   } else {

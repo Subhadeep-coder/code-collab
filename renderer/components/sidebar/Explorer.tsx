@@ -5,6 +5,8 @@ import { Button } from '../ui/button';
 type Props = {};
 
 export const Explorer = (props: Props) => {
+  const [folderPath, setFolderPath] = useState<string | undefined>();
+  const [filePath, setFilePath] = useState<string | undefined>();
   const [expandedSections, setExpandedSections] = useState({
     explorer: true
   });
@@ -14,6 +16,16 @@ export const Explorer = (props: Props) => {
       ...prev,
       [section]: !prev[section]
     }));
+  };
+
+  const handleOpenFolder = async () => {
+    const result = await window.context.openFolder();
+    setFolderPath(result || 'No folder selected');
+  };
+
+  const handleOpenFile = async () => {
+    const result = await window.context.openFile();
+    setFilePath(result || 'No file selected');
   };
 
   return (
@@ -43,18 +55,22 @@ export const Explorer = (props: Props) => {
               <Button
                 variant="ghost"
                 className="h-8 justify-start text-sm bg-[#2D2D2D] hover:bg-[#37373D] text-[#CCCCCC]"
+                onClick={handleOpenFolder}
               >
                 <FolderOpen className="mr-2 h-4 w-4" />
                 Open Folder
               </Button>
+              <p>{folderPath ? `Selected Folder: ${folderPath}` : ''}</p>
 
               <Button
                 variant="ghost"
                 className="h-8 justify-start text-sm bg-[#2D2D2D] hover:bg-[#37373D] text-[#CCCCCC]"
+                onClick={handleOpenFile}
               >
                 <File className="mr-2 h-4 w-4" />
                 Open File
               </Button>
+              <p>{filePath ? `Selected Folder: ${filePath}` : ''}</p>
             </div>
 
             <div className="mt-4 px-2">
