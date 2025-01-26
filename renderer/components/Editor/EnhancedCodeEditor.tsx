@@ -104,9 +104,9 @@ export const EnhancedCodeEditor: React.FC<EnhancedCodeEditorProps> = ({
         )}
       </div>
 
-      {/* File Information */}
-      <div className="p-2 text-sm text-gray-400 bg-[#252526] border-b border-[#3C3C3C]">
-        Editing: {filePath || "No file selected"}
+      {/* File Path */}
+      <div className="px-3 py-1 text-sm text-gray-400 bg-[#252526] border-b border-[#3C3C3C]">
+        {filePath ? filePath.split(/[/\\]/).join(" › ") : "No file selected"}
       </div>
 
       {/* Code Editor */}
