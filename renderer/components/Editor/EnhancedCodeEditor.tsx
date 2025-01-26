@@ -1,109 +1,122 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import { Button } from "../ui/button";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
+import { useFileContext } from "providers/file-provider";
 
 const Editor = dynamic(
   () => import("@monaco-editor/react").then((mod) => mod.Editor),
   { ssr: false }
 );
 
-const languages = [
-  { value: "javascript", label: "JavaScript" },
-  { value: "typescript", label: "TypeScript" },
-  { value: "python", label: "Python" },
-  { value: "java", label: "Java" },
-  { value: "csharp", label: "C#" },
-  { value: "cpp", label: "C++" },
-];
+// Define a hashmap to map file extensions to Monaco language codes
+const extensionToLanguageMap: { [key: string]: string } = {
+  javascript: "javascript",
+  js: "javascript",
+  typescript: "typescript",
+  ts: "typescript",
+  python: "python",
+  py: "python",
+  java: "java",
+  csharp: "csharp",
+  cs: "csharp",
+  cpp: "cpp",
+  c: "cpp", // Treat 'c' as C++
+  go: "go",
+  ruby: "ruby",
+  php: "php",
+};
 
-const themes = [
-  { value: "vs-dark", label: "Dark" },
-  { value: "light", label: "Light" },
-];
+interface EnhancedCodeEditorProps {
+  filePath: string;
+  fileContent: string;
+  extension: string
+}
 
-export const EnhancedCodeEditor: React.FC = () => {
-  const [language, setLanguage] = useState("javascript");
+export const EnhancedCodeEditor: React.FC<EnhancedCodeEditorProps> = ({
+  filePath,
+  fileContent,
+  extension
+}) => {
   const [theme, setTheme] = useState("vs-dark");
   const [fontSize, setFontSize] = useState(14);
+  const [content, setContent] = useState(fileContent);
+  const { recentFiles, setSelectedFile, addRecentFile, removeSelectedFile } = useFileContext();
+  const [activeFile, setActiveFile] = useState<{ name: string; content: string; path: string, extension: string } | null>({
+    name: filePath.split("/").pop() || "Untitled",
+    content: fileContent,
+    path: filePath,
+    extension: extension
+  });
+
+  useEffect(() => {
+    setContent(fileContent);
+  }, [fileContent]);
+
+  const language = extensionToLanguageMap[extension || ''] || 'plaintext';
 
   const handleFontSizeChange = (delta: number) => {
     setFontSize((prevSize) => Math.max(8, Math.min(prevSize + delta, 24)));
   };
+  const handleFileSelect = (file: { name: string; content: string; path: string, extension: string }) => {
+    setActiveFile(file);
+    setContent(file.content);
+    setSelectedFile(file);
+    addRecentFile(file);
+  };
+
+  const handleCloseTab = (filePath: string) => {
+    removeSelectedFile(filePath);
+    if (activeFile?.path === filePath) {
+      setActiveFile(recentFiles[recentFiles.length - 1]);
+      setContent(recentFiles[recentFiles.length - 1].content);
+    }
+  };
 
   return (
     <div className="flex flex-col w-full h-full min-h-0 bg-[#1e1e1e]">
-      <div className="flex items-center justify-between p-2 border-b border-[#3C3C3C] bg-[#252526] shrink-0">
-        <div className="flex items-center space-x-2">
-          <Select value={language} onValueChange={setLanguage}>
-            <SelectTrigger className="h-8 w-[180px] border-[#3C3C3C] bg-[#3C3C3C] text-white">
-              <SelectValue placeholder="Select language" />
-            </SelectTrigger>
-            <SelectContent className="bg-[#252526] border-[#3C3C3C]">
-              {
-                languages.map((lang) => (
-                  <SelectItem
-                    key={lang.value}
-                    value={lang.value}
-                    className="text-white hover:bg-[#37373D] focus:bg-[#37373D]">
-                    {lang.label}
-                  </SelectItem>
-                ))
-              }
-            </SelectContent>
-          </Select>
-          <Select value={theme} onValueChange={setTheme}>
-            <SelectTrigger className="h-8 w-[100px] border-[#3C3C3C] bg-[#3C3C3C] text-white">
-              <SelectValue placeholder="Theme" />
-            </SelectTrigger>
-            <SelectContent className="bg-[#252526] border-[#3C3C3C]">
-              {
-                themes.map((t) => (
-                  <SelectItem
-                    key={t.value}
-                    value={t.value}
-                    className="text-white hover:bg-[#37373D] focus:bg-[#37373D]">
-                    {t.label}
-                  </SelectItem>
-                ))
-              }
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => handleFontSizeChange(-1)}
-            className="h-8 w-8 border-[#3C3C3C] bg-[#3C3C3C] text-white hover:bg-[#37373D]">
-            <Minus className="h-4 w-4" />
-          </Button>
-          <span className="text-sm text-white min-w-[3ch] text-center">
-            {fontSize}
-          </span>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => handleFontSizeChange(1)}
-            className="h-8 w-8 border-[#3C3C3C] bg-[#3C3C3C] text-white hover:bg-[#37373D]">
-            <Plus className="h-4 w-4" />
-          </Button>
-        </div>
+      {/* Recent Files Tab */}
+      <div className="flex items-center p-2 border-b border-[#3C3C3C] bg-[#252526] shrink-0 space-x-2">
+        {recentFiles.length > 0 ? (
+          recentFiles.map((file) => (
+            <div
+              key={file.path}
+              className="flex items-center space-x-2 text-white cursor-pointer"
+              onClick={() => handleFileSelect(file)}
+            >
+              <span>{file.name}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent triggering file select when clicking close
+                  handleCloseTab(file.path);
+                }}
+                className="h-6 w-6 border-[#3C3C3C] text-white hover:bg-[#37373D]"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          ))
+        ) : (
+          <span className="text-sm text-gray-400">No recent files</span>
+        )}
       </div>
+
+      {/* File Information */}
+      <div className="p-2 text-sm text-gray-400 bg-[#252526] border-b border-[#3C3C3C]">
+        Editing: {filePath || "No file selected"}
+      </div>
+
+      {/* Code Editor */}
       <div className="flex-grow min-h-0">
         <Editor
           height="100%"
           language={language}
           theme={theme}
-          defaultValue="// Start coding here..."
+          value={content}
+          onChange={(newValue) => setContent(newValue || "")}
           options={{
             minimap: { enabled: false },
             fontSize: fontSize,

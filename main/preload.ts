@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { GetUserDetails, Login, Logout } from "./types/auth-functions";
+import { OpenFile } from "./types/file-functions";
 
 if (!process.contextIsolated) {
   throw new Error(`contextIsolation must be enabled in the BrowserWindow`);
@@ -17,7 +18,7 @@ try {
     getDetails: (...args: Parameters<GetUserDetails>) =>
       ipcRenderer.invoke("user:get-details", ...args),
     createFile: (...args: any) => ipcRenderer.invoke("file:create", ...args),
-    openFile: (...args: any) => ipcRenderer.invoke("file:open", ...args),
+    openFile: (...args: Parameters<OpenFile>) => ipcRenderer.invoke("file:open", ...args),
     openFolder: (...args: any) => ipcRenderer.invoke("folder:open", ...args),
   });
 } catch (error) {

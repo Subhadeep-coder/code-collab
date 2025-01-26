@@ -6,5 +6,5 @@ export type FileNode = {
     children?: FileNode[];
 };
 
-export type OpenFile = () => Promise<{ success: boolean, content: string, filePath: string }>;
-export type OpenFolder = () => Promise<{ success: boolean, folderPath: string, folderStructure: FileNode[] }>;
+export type OpenFile = (filePath?: string) => Promise<{ success: boolean, content: string, filePath: string, fileName: string }>;
+export type OpenFolder = () => Promise<{ success: boolean, rootFolderName: string, folderPath: string, folderStructure: FileNode[] }>;

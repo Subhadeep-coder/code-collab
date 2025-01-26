@@ -34,22 +34,29 @@ class FileService {
         }
     }
 
-    async openFile(window: BrowserWindow) {
+    async openFile(window: BrowserWindow, filepath?: string) {
         try {
-            const { canceled, filePaths } = await dialog.showOpenDialog(window, {
-                properties: ['openFile'],
-                filters: [{ name: 'All Files', extensions: ['*'] }],
-            });
+            let filePath: string;
 
-            if (canceled || filePaths.length === 0) {
-                return { success: false, message: 'No file selected.' };
+            if (filepath) {
+                filePath = filepath;
+            } else {
+                const { canceled, filePaths } = await dialog.showOpenDialog(window, {
+                    properties: ['openFile'],
+                    filters: [{ name: 'All Files', extensions: ['*'] }],
+                });
+
+                if (canceled || filePaths.length === 0) {
+                    return { success: false, message: 'No file selected.' };
+                }
+
+                filePath = filePaths[0];
             }
 
-            const filePath = filePaths[0];
             const content = fs.readFileSync(filePath, { encoding: 'utf8' });
-            console.log(content);
-            console.log(filePath);
-            return { success: true, content, filePath };
+            const fileName = path.basename(filePath);
+
+            return { success: true, content, filePath, fileName };
         } catch (error) {
             console.error('Error opening file:', error);
             return { success: false, message: 'Error opening file.' };
@@ -67,11 +74,17 @@ class FileService {
             }
 
             const folderPath = filePaths[0];
+            const rootFolderName = path.basename(folderPath);
 
             // Generate folder structure recursively
             const folderStructure = this.readFolderRecursive(folderPath);
 
-            return { success: true, folderPath, folderStructure };
+            return {
+                success: true,
+                rootFolderName,
+                folderPath,
+                folderStructure,
+            };
         } catch (error) {
             console.error('Error opening folder:', error);
             return { success: false, message: 'Error opening folder.' };

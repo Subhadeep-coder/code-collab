@@ -6,6 +6,7 @@ import { electronApp, optimizer } from '@electron-toolkit/utils';
 import { GetUserDetails, Login, Logout } from './types/auth-functions';
 import dotenv from 'dotenv';
 import { electronFileService } from './helpers/file-functions';
+import { OpenFile } from './types/file-functions';
 
 dotenv.config();
 
@@ -56,8 +57,8 @@ app.whenReady().then(async () => {
   });
 
 
-  ipcMain.handle("file:open", async () => {
-    return electronFileService.openFile(mainWindow);
+  ipcMain.handle("file:open", async (_, ...args: Parameters<OpenFile>) => {
+    return electronFileService.openFile(mainWindow, ...args);
   });
 
   ipcMain.handle("folder:open", async () => {
