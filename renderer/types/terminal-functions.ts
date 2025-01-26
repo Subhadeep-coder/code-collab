@@ -1,0 +1,1 @@
+export type RunCommand = (command: string) => Promise<{ output?: string; error?: string }>;

@@ -1,0 +1,1 @@
+export type RunCommand = (command: string) => void;

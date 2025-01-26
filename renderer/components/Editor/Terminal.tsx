@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Terminal as XTerminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import "@xterm/xterm/css/xterm.css";
-
 type Props = {
   className?: string;
 };
@@ -14,7 +13,6 @@ export const Terminal: React.FC<Props> = ({ className }) => {
   const [terminal, setTerminal] = useState<XTerminal | null>(null);
   const [fitAddon, setFitAddon] = useState<FitAddon | null>(null);
   const commandBufferRef = useRef("");
-  const currentPathRef = useRef("C:\\Users\\User");
 
   useEffect(() => {
     if (!terminalRef.current) return;
@@ -42,17 +40,15 @@ export const Terminal: React.FC<Props> = ({ className }) => {
 
     const newFitAddon = new FitAddon();
     newTerminal.loadAddon(newFitAddon);
-
     newTerminal.open(terminalRef.current);
     newFitAddon.fit();
 
+    // Setup terminal state
     setTerminal(newTerminal);
     setFitAddon(newFitAddon);
 
-    // Initial terminal setup
-    newTerminal.writeln("\x1b[2m\x1b[36m# Command Prompt - VSCode Terminal\x1b[0m");
-    newTerminal.writeln("Microsoft Windows [Version 10.0.19045.3803]");
-    newTerminal.writeln("(c) Microsoft Corporation. All rights reserved.");
+    // Initialize terminal UI
+    newTerminal.writeln("\x1b[36mInteractive Terminal - Powered by Electron\x1b[0m");
     newTerminal.writeln("");
     writePrompt(newTerminal);
 
@@ -62,82 +58,54 @@ export const Terminal: React.FC<Props> = ({ className }) => {
   }, []);
 
   const writePrompt = (term: XTerminal) => {
-    term.write(`\x1b[32m${currentPathRef.current}>\x1b[0m `);
+    term.write("\x1b[32m> \x1b[0m");
   };
 
-  const handleCommand = (command: string, term: XTerminal) => {
-    const cmd = command.trim().toLowerCase();
-
-    switch (cmd) {
-      case 'cls':
-        term.clear();
-        break;
-      case 'dir':
-        term.writeln(' Directory of ' + currentPathRef.current);
-        term.writeln('');
-        term.writeln(' <DIR>    Desktop');
-        term.writeln(' <DIR>    Documents');
-        term.writeln(' <DIR>    Downloads');
-        term.writeln(' <DIR>    Pictures');
-        term.writeln('');
-        break;
-      case 'echo %cd%':
-      case 'cd':
-        term.writeln(currentPathRef.current);
-        break;
-      case 'help':
-        term.writeln('Available commands:');
-        term.writeln('  cls     - Clear the screen');
-        term.writeln('  dir     - List directory contents');
-        term.writeln('  cd      - Show current directory');
-        term.writeln('  help    - Show this help message');
-        term.writeln('  ver     - Show version information');
-        break;
-      case 'ver':
-        term.writeln('Microsoft Windows [Version 10.0.19045.3803]');
-        break;
-      case '':
-        break;
-      default:
-        term.writeln(`'${command}' is not recognized as an internal or external command,`);
-        term.writeln('operable program or batch file.');
+  const handleCommand = async (command: string) => {
+    if (!command.trim()) {
+      terminal?.writeln("");
+      writePrompt(terminal!);
+      return;
     }
+
+    // Write the command to the terminal
+    terminal?.writeln("");
+    // Execute the command via IPC
+    console.log(command);
+    window.context.removeCommandOutputListeners();
+    await window.context.runCommand(command);
+    window.context.getCommandOutput((event, data) => {
+      if (data.error) {
+        terminal?.writeln(`\x1b[31m${data.error}\x1b[0m`);
+      } else if (data.output) {
+        terminal?.writeln(`\x1b[37m${data.output}\x1b[0m`);
+      } else {
+        terminal?.writeln(`\x1b[33mUnknown response\x1b[0m`);
+      }
+    });
+
+    window.context.getProcessDone(() => {
+      commandBufferRef.current = "";
+      writePrompt(terminal!);
+    });
+
   };
 
-  useEffect(() => {
-    if (!terminal || !fitAddon) return;
-
-    const handleResize = () => {
-      fitAddon.fit();
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [terminal, fitAddon]);
 
   useEffect(() => {
     if (!terminal) return;
 
     const handleKeyInput = (data: string) => {
       switch (data) {
-        case '\r': // Enter
-          terminal.writeln('');
-          handleCommand(commandBufferRef.current, terminal);
-          commandBufferRef.current = '';
-          writePrompt(terminal);
+        case "\r": // Enter
+          handleCommand(commandBufferRef.current);
           break;
 
-        case '\u007F': // Backspace
+        case "\u007F": // Backspace
           if (commandBufferRef.current.length > 0) {
             commandBufferRef.current = commandBufferRef.current.slice(0, -1);
-            terminal.write('\b \b');
+            terminal.write("\b \b");
           }
-          break;
-
-        case '\u0003': // Ctrl+C
-          terminal.writeln('^C');
-          commandBufferRef.current = '';
-          writePrompt(terminal);
           break;
 
         default:
@@ -151,10 +119,17 @@ export const Terminal: React.FC<Props> = ({ className }) => {
     terminal.onData(handleKeyInput);
   }, [terminal]);
 
-  return (
-    <div
-      ref={terminalRef}
-      className={`w-full h-full overflow-hidden bg-[#1e1e1e] ${className}`}
-    />
-  );
+  useEffect(() => {
+    if (!terminal || !fitAddon) return;
+
+    const handleResize = () => {
+      fitAddon.fit();
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [terminal, fitAddon]);
+
+  return <div ref={terminalRef} className="w-full h-full bg-[#1e1e1e]" />;
 };
+

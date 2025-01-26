@@ -7,6 +7,8 @@ import { GetUserDetails, Login, Logout } from './types/auth-functions';
 import dotenv from 'dotenv';
 import { electronFileService } from './helpers/file-functions';
 import { OpenFile } from './types/file-functions';
+import { electronTerminalService } from './helpers/terminal-functions';
+import { RunCommand } from './types/terminal-functions';
 
 dotenv.config();
 
@@ -55,14 +57,14 @@ app.whenReady().then(async () => {
   ipcMain.handle("file:create", async (_, fileName: string, content: string) => {
     return electronFileService.createFile(mainWindow, fileName, content);
   });
-
-
   ipcMain.handle("file:open", async (_, ...args: Parameters<OpenFile>) => {
     return electronFileService.openFile(mainWindow, ...args);
   });
-
   ipcMain.handle("folder:open", async () => {
     return electronFileService.openFolder(mainWindow);
+  });
+  ipcMain.handle("run:command", async (_, ...args: Parameters<RunCommand>) => {
+    return electronTerminalService.run(mainWindow, ...args);
   });
 
   // Reactivate app on macOS
