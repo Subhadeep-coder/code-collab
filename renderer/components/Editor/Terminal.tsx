@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Terminal as XTerminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import "@xterm/xterm/css/xterm.css";
+
 type Props = {
   className?: string;
 };
@@ -12,7 +13,6 @@ export const Terminal: React.FC<Props> = ({ className }) => {
   const terminalRef = useRef<HTMLDivElement>(null);
   const [terminal, setTerminal] = useState<XTerminal | null>(null);
   const [fitAddon, setFitAddon] = useState<FitAddon | null>(null);
-  const commandBufferRef = useRef("");
 
   useEffect(() => {
     if (!terminalRef.current) return;
@@ -43,93 +43,49 @@ export const Terminal: React.FC<Props> = ({ className }) => {
     newTerminal.open(terminalRef.current);
     newFitAddon.fit();
 
-    // Setup terminal state
     setTerminal(newTerminal);
     setFitAddon(newFitAddon);
 
-    // Initialize terminal UI
     newTerminal.writeln("\x1b[36mInteractive Terminal - Powered by Electron\x1b[0m");
-    newTerminal.writeln("");
-    writePrompt(newTerminal);
+    // Listen for output from the backend
+    window.context.getCommandOutput((_, data) => {
+      newTerminal.write(data); // Write backend output to the terminal
+    });
 
     return () => {
       newTerminal.dispose();
+      window.context.removeCommandOutputListeners();
     };
   }, []);
 
-  const writePrompt = (term: XTerminal) => {
-    term.write("\x1b[32m> \x1b[0m");
-  };
+  // useEffect(() => {
+  //   if (!fitAddon) return;
 
-  const handleCommand = async (command: string) => {
-    if (!command.trim()) {
-      terminal?.writeln("");
-      writePrompt(terminal!);
-      return;
-    }
+  //   const handleResize = () => {
+  //     fitAddon.fit();
+  //     window.context.resizeTerminal(fitAddon.proposeDimensions()?.cols || 80, fitAddon.proposeDimensions()?.rows || 30);
+  //   };
 
-    // Write the command to the terminal
-    terminal?.writeln("");
-    // Execute the command via IPC
-    console.log(command);
-    window.context.removeCommandOutputListeners();
-    await window.context.runCommand(command);
-    window.context.getCommandOutput((event, data) => {
-      if (data.error) {
-        terminal?.writeln(`\x1b[31m${data.error}\x1b[0m`);
-      } else if (data.output) {
-        terminal?.writeln(`\x1b[37m${data.output}\x1b[0m`);
-      } else {
-        terminal?.writeln(`\x1b[33mUnknown response\x1b[0m`);
-      }
-    });
-
-    window.context.getProcessDone(() => {
-      commandBufferRef.current = "";
-      writePrompt(terminal!);
-    });
-
-  };
-
+  //   window.addEventListener("resize", handleResize);
+  //   return () => {
+  //     window.removeEventListener("resize", handleResize);
+  //   };
+  // }, [fitAddon]);
 
   useEffect(() => {
     if (!terminal) return;
 
     const handleKeyInput = (data: string) => {
-      switch (data) {
-        case "\r": // Enter
-          handleCommand(commandBufferRef.current);
-          break;
-
-        case "\u007F": // Backspace
-          if (commandBufferRef.current.length > 0) {
-            commandBufferRef.current = commandBufferRef.current.slice(0, -1);
-            terminal.write("\b \b");
-          }
-          break;
-
-        default:
-          if (data >= String.fromCharCode(32) && data <= String.fromCharCode(126)) {
-            commandBufferRef.current += data;
-            terminal.write(data);
-          }
-      }
+      window.context.runCommand(data); // Send input directly to the backend
     };
 
-    terminal.onData(handleKeyInput);
+    const disposable = terminal.onData(handleKeyInput);
+
+    // Cleanup: Dispose of the listener when the component unmounts
+    return () => {
+      disposable.dispose();
+    };
   }, [terminal]);
 
-  useEffect(() => {
-    if (!terminal || !fitAddon) return;
-
-    const handleResize = () => {
-      fitAddon.fit();
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [terminal, fitAddon]);
-
-  return <div ref={terminalRef} className="w-full h-full bg-[#1e1e1e]" />;
+  return <div ref={terminalRef} className={`w-full h-full bg-[#1e1e1e] ${className}`} />;
 };
-

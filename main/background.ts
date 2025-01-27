@@ -64,7 +64,7 @@ app.whenReady().then(async () => {
     return electronFileService.openFolder(mainWindow);
   });
   ipcMain.handle("run:command", async (_, ...args: Parameters<RunCommand>) => {
-    return electronTerminalService.run(mainWindow, ...args);
+    return electronTerminalService.runCommand(...args);
   });
 
   // Reactivate app on macOS

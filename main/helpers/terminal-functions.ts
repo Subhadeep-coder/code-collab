@@ -1,33 +1,40 @@
-import { spawn } from "child_process";
 import { BrowserWindow } from "electron";
+import { spawn, IPty } from "node-pty";
+import os from "os";
 
 class TerminalService {
-    run(mainWindow: BrowserWindow, command: string,): void {
-        const [cmd, ...args] = command.split(" ");
-        const process = spawn(cmd, args);
-        console.log("Process spawned");
-        // Stream stdout and stderr
-        process.stdout.on("data", (chunk) => {
-            console.log("Process is running", chunk.toString());
-            mainWindow.webContents.send("command:output", { output: chunk.toString() });
+    private ptyProcess: IPty;
+
+    constructor() {
+        const shell = os.platform() === "win32" ? "powershell.exe" : process.env.SHELL || "bash";
+        this.ptyProcess = spawn(shell, [], {
+            name: "xterm-color",
+            cols: 80,
+            rows: 30,
+            cwd: process.cwd(),
+            env: process.env,
         });
 
-        process.stderr.on("data", (chunk) => {
-            console.log("Process running", chunk.toString());
-            mainWindow.webContents.send("command:output", { error: chunk.toString() });
+        this.setupListeners();
+    }
+
+    private setupListeners() {
+        this.ptyProcess.onData((data: string) => {
+            BrowserWindow.getAllWindows()[0]?.webContents.send("command:output", data);
         });
 
-        // Handle process exit
-        process.on("exit", (code) => {
-            mainWindow.webContents.send("process:done", { code });
+        this.ptyProcess.onExit(({ exitCode, signal }: { exitCode: number; signal?: number }) => {
+            BrowserWindow.getAllWindows()[0]?.webContents.send("process:done", { code: exitCode });
         });
+    }
 
-        process.on("error", (err) => {
-            console.log("Process error");
-            mainWindow.webContents.send("command:output", { error: `${err.message}` });
-        });
+    runCommand(input: string) {
+        console.log(input);
+        this.ptyProcess.write(input);
+    }
 
-        console.log("Returning from run function");
+    resize(cols: number, rows: number) {
+        this.ptyProcess.resize(cols, rows);
     }
 }
 
