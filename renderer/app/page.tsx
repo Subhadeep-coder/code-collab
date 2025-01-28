@@ -6,9 +6,9 @@ import ExtraActivities from "../components/ExtraActivities";
 import { EnhancedCodeEditor } from "../components/Editor/EnhancedCodeEditor";
 import { CollaborativeEditor } from "../components/Editor/CollaborativeEditor";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "components/ui/resizable";
-import { Terminal } from "components/Editor/Terminal";
 import WelcomePage from "components/default";
 import { useFileContext } from "providers/file-provider";
+import { TerminalContainer } from "components/Editor/TerminalContainer";
 
 export default function HomePage() {
   const [isCollaborative, setIsCollaborative] = useState<boolean>(false);
@@ -64,7 +64,7 @@ export default function HomePage() {
       </ResizablePanel>
       <ResizableHandle />
       <ResizablePanel defaultSize={25} minSize={15} maxSize={70} className="bg-[#1e1e1e]">
-        <Terminal className="h-full" />
+        <TerminalContainer/>
       </ResizablePanel>
     </ResizablePanelGroup>
   );
