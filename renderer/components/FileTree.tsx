@@ -14,11 +14,6 @@ export const FileTree = ({ item, depth = 0, selectedFile, onFileSelect }: FileTr
   const { expandedFolders, toggleExpandedFolder } = useFileContext();
   const isExpanded = expandedFolders.has(item.path);
 
-  const toggleExpand = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    toggleExpandedFolder(item.path);
-  };
-
   const handleFileClick = async (e: React.MouseEvent) => {
     e.stopPropagation()
     if (!item.isDirectory) {
@@ -26,6 +21,10 @@ export const FileTree = ({ item, depth = 0, selectedFile, onFileSelect }: FileTr
       if (result.success) {
         onFileSelect(result.fileName, result.content, item.path);
       }
+    }
+    else{
+      toggleExpandedFolder(item.path);
+  
     }
   }
 
@@ -50,7 +49,7 @@ export const FileTree = ({ item, depth = 0, selectedFile, onFileSelect }: FileTr
         {
           item.isDirectory ? (
             <>
-              <span className="w-4 h-4 flex items-center justify-center" onClick={toggleExpand}>
+            <span className="w-4 h-4 flex items-center justify-center" >
                 {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
               </span>
               <span className="w-4 h-4 flex items-center justify-center ml-1">
@@ -61,7 +60,7 @@ export const FileTree = ({ item, depth = 0, selectedFile, onFileSelect }: FileTr
                     <Folder size={16} className="text-[#dcb67a]" />
                   )
                 }
-              </span>
+              </span>          
             </>
           ) : (
             <>
