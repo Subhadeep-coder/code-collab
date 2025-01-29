@@ -2,6 +2,7 @@ import { FileProvider } from "providers/file-provider";
 import { AppLayout } from "../components/AppLayout";
 import { AuthProvider } from "../providers/auth-provider";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -16,6 +17,7 @@ export default function RootLayout({
             <AppLayout>{children}</AppLayout>
           </FileProvider>
         </AuthProvider>
+        <Toaster />
       </body>
     </html>
   );

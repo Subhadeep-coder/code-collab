@@ -11,7 +11,9 @@ declare global {
       login: Login,
       logout: Logout,
       getDetails: GetUserDetails
+      createFolder: Function,
       createFile: Function,
+      deleteFolder: Function,
       openFile: OpenFile,
       openFolder: OpenFolder,
       runCommand: RunCommand,
