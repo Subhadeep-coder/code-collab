@@ -98,7 +98,7 @@ class FileService {
     }
   }
 
-  async createFolder(window: BrowserWindow, folderName: string) {
+  async createFolder(folderName: string) {
     try {
       // Get the currently selected folder path from the file service
       const currentPath = this._currentPath; // You'll need to add this property
