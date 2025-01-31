@@ -1,39 +1,28 @@
-import type React from "react";
-import { X, Plus } from 'lucide-react';
+"use client";
 
-type TopbarElementType = {
-  id: number;
-  name: string;
-};
+import { Plus, X } from "lucide-react"
+import { useTerminalContext } from "providers/terminal-provider"
+import { useState } from "react"
 
-type Props = {
-  activeTerminal: number
-  onSelectTerminal: (id: number) => void
-  onAddTerminal: () => void
-  onCloseTerminal: (id: number) => void
-  terminals: TopbarElementType[]
-}
+export const TerminalTopbar: React.FC = () => {
+  const { addTerminal, removeTerminal, activeTerminalId } = useTerminalContext()
+  const [activeTopbarElement, setActiveTopbarElement] = useState<number>(1)
 
-export const Topbar: React.FC<Props> = ({
-  activeTerminal,
-  onSelectTerminal,
-  onAddTerminal,
-  onCloseTerminal,
-}) => {
   const topbarElements = [
     { id: 1, name: "Terminal" },
     { id: 2, name: "Output" },
   ]
+
   return (
-    <div className='flex h-9 items-center justify-between bg-[#1e1e1e] text-[#cccccc]'>
+    <div className='flex h-9 items-center justify-between bg-[#1e1e1e] text-[#cccccc] '>
       <div className='flex h-full items-center'>
         {topbarElements.map((element) => (
           <button
             key={element.id}
             className={`h-full px-4 text-sm font-medium hover:text-white ${
-              activeTerminal === element.id ? "text-white border-b border-[#686984]" : "text-gray-500"
+              activeTopbarElement === element.id ? "text-white border-b border-[#686984]" : "text-gray-500"
             }`}
-            onClick={() => onSelectTerminal(element.id)}
+            onClick={() => setActiveTopbarElement(element.id)}
           >
             {element.name}
           </button>
@@ -41,14 +30,14 @@ export const Topbar: React.FC<Props> = ({
       </div>
       <div className='flex items-center pr-2'>
         <button
-          onClick={onAddTerminal}
+          onClick={addTerminal}
           className='p-1.5 hover:bg-[#ffffff1a] rounded-sm'
           aria-label='New Terminal'
         >
           <Plus className='h-4 w-4' />
         </button>
         <button
-          onClick={() => onCloseTerminal(activeTerminal)}
+          // onClick={() => removeTerminal(activeTerminalId)}
           className='p-1.5 hover:bg-[#ffffff1a] rounded-sm'
           aria-label='Close Terminal'
         >
@@ -56,5 +45,5 @@ export const Topbar: React.FC<Props> = ({
         </button>
       </div>
     </div>
-  );
-};
+  )
+}

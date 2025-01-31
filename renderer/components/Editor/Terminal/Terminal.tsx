@@ -10,7 +10,7 @@ type Props = {
   className?: string
 }
 
-export const Terminal: React.FC<Props> = ({ className }) => {
+export const Terminal: React.FC<{ terminalId: string, className?: string }> = ({ terminalId, className }) => {
   const terminalRef = useRef<HTMLDivElement>(null)
   const [terminal, setTerminal] = useState<XTerminal | null>(null)
   const [fitAddon, setFitAddon] = useState<FitAddon | null>(null)

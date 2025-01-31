@@ -6,7 +6,7 @@ import { electronApp, optimizer } from "@electron-toolkit/utils";
 import { GetUserDetails, Login, Logout } from "./types/auth-functions";
 import dotenv from "dotenv";
 import { electronFileService } from "./helpers/file-functions";
-import { OpenFile } from "./types/file-functions";
+import { CreateFolder, OpenFile } from "./types/file-functions";
 import { electronTerminalService } from "./helpers/terminal-functions";
 import { RunCommand } from "./types/terminal-functions";
 
@@ -68,8 +68,8 @@ app.whenReady().then(async () => {
       return electronFileService.createFile(mainWindow, fileName, content);
     }
   );
-  ipcMain.handle("folder:create", async (_, folderName: string) => {
-    return electronFileService.createFolder(mainWindow, folderName);
+  ipcMain.handle("folder:create", async (_, ...args: Parameters<CreateFolder>) => {
+    return electronFileService.createFolder(...args);
   });
   ipcMain.handle("file:open", async (_, ...args: Parameters<OpenFile>) => {
     return electronFileService.openFile(mainWindow, ...args);

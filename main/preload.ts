@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { GetUserDetails, Login, Logout } from "./types/auth-functions";
-import { FileNode, OpenFile } from "./types/file-functions";
+import { CreateFolder, FileNode, OpenFile } from "./types/file-functions";
 import { RunCommand } from "./types/terminal-functions";
 
 export type FileSystemAPI = {
@@ -14,7 +14,7 @@ export type FileSystemAPI = {
 };
 
 if (!process.contextIsolated) {
-  throw new Error(`contextIsolation must be enabled in the BrowserWindow`);
+  throw new Error("contextIsolation must be enabled in the BrowserWindow");
 }
 
 try {
@@ -42,8 +42,7 @@ try {
     getProcessDone: (
       cb: (event: Electron.IpcRendererEvent, data: any) => void
     ) => ipcRenderer.once("process:done", cb),
-    createFolder: (folderName: string) =>
-      ipcRenderer.invoke("folder:create", folderName),
+    createFolder: (...args: Parameters<CreateFolder>) => ipcRenderer.invoke("folder:create", ...args),
     deleteFolder: (
       path: string
     ): Promise<{
