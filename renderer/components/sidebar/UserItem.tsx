@@ -5,6 +5,7 @@ import React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '../../providers/auth-provider'
+import { authService } from 'lib/auth-service'
 
 export const UserItem = () => {
     const { user, logout, isLoading } = useAuth()
@@ -13,7 +14,7 @@ export const UserItem = () => {
     const handleLogout = async () => {
         try {
             await logout();
-            window.context.logout();
+            await authService.logout();
             router.push('/login');
         } catch (error) {
             console.error('Logout failed', error)
@@ -23,7 +24,7 @@ export const UserItem = () => {
     if (isLoading) {
         return <div className="p-4 text-center">Loading...</div>
     }
-    
+
     if (!user) {
         return (
             <div className="flex flex-col justify-center items-center h-full p-4">

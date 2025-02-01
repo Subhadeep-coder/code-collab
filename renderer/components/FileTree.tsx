@@ -2,6 +2,7 @@ import { ChevronDown, ChevronRight, Folder, FolderOpen, File } from "lucide-reac
 import { useState } from "react"
 import type { FileNode } from "../types/file-functions"
 import { File as SelectedFile, useFileContext } from "providers/file-provider"
+import { fileService } from "lib/file-service"
 
 interface FileTreeProps {
   item: FileNode
@@ -17,14 +18,14 @@ export const FileTree = ({ item, depth = 0, selectedFile, onFileSelect }: FileTr
   const handleFileClick = async (e: React.MouseEvent) => {
     e.stopPropagation()
     if (!item.isDirectory) {
-      const result = await window.context.openFile(item.path);
+      const result = await fileService.openFile(item.path);
       if (result.success) {
         onFileSelect(result.fileName, result.content, item.path);
       }
     }
-    else{
+    else {
       toggleExpandedFolder(item.path);
-  
+
     }
   }
 
@@ -49,7 +50,7 @@ export const FileTree = ({ item, depth = 0, selectedFile, onFileSelect }: FileTr
         {
           item.isDirectory ? (
             <>
-            <span className="w-4 h-4 flex items-center justify-center" >
+              <span className="w-4 h-4 flex items-center justify-center" >
                 {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
               </span>
               <span className="w-4 h-4 flex items-center justify-center ml-1">
@@ -60,7 +61,7 @@ export const FileTree = ({ item, depth = 0, selectedFile, onFileSelect }: FileTr
                     <Folder size={16} className="text-[#dcb67a]" />
                   )
                 }
-              </span>          
+              </span>
             </>
           ) : (
             <>

@@ -6,6 +6,7 @@ import { FileNode } from "types/file-functions"
 import { useFileContext } from "providers/file-provider"
 import { Input } from "../ui/input"
 import { toast } from "sonner"
+import { fileService } from "lib/file-service"
 
 export const Explorer = () => {
   const {
@@ -46,7 +47,7 @@ export const Explorer = () => {
   }, [selectedFolderPath]);
 
   const handleOpenFolder = async () => {
-    const result = await window.context.openFolder();
+    const result = await fileService.openFolder();
     if (result.success) {
       setSelectedFolder(result.rootFolderName);
       setFolderStructure(result.folderStructure);
@@ -68,7 +69,7 @@ export const Explorer = () => {
     setIsLoading(true);
     try {
       // Add this method to your preload/main process
-      const result = await window.context.deleteFolder(selectedFolderPath);
+      const result = await fileService.deleteFolder(selectedFolderPath);
 
       if (result.success) {
         toast.success(result.message || "Folder deleted successfully");
@@ -88,7 +89,7 @@ export const Explorer = () => {
   };
 
   const handleOpenFile = async () => {
-    const result = await window.context.openFile();
+    const result = await fileService.openFile();
     if (result.success && result.filePath) {
       const filePath = result.filePath;
       const fileContent = result.content;
@@ -120,7 +121,7 @@ export const Explorer = () => {
 
     setIsLoading(true);
     try {
-      const result = await window.context.createFolder(newFolderName);
+      const result = await fileService.createFolder(newFolderName);
 
       if (result.success) {
         toast.success(result.message);
@@ -166,7 +167,7 @@ export const Explorer = () => {
       toast.error("Please open a folder first");
       return;
     }
-    window.context.createFile();
+    // window.context.createFile();
   }
 
   const handleCollapseFolders = () => {

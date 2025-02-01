@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react'
 import { Terminal, TerminalType } from 'types/terminal-functions';
 import { useFileContext } from './file-provider';
+import { terminalService } from 'lib/terminal-service';
 
 // Define the shape of the context
 type TerminalContextType = {
@@ -32,7 +33,7 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         terminalType
       };
       console.log("Selected folder:" + rootFolderPath);
-      window.context.createTerminal(newId, null, null, rootFolderPath!);
+      terminalService.createTerminal(newId, null, null, rootFolderPath!);
       setTerminals(prevTerminals => [...prevTerminals, newTerminal])
       setActiveTerminalId(newId)
     }
@@ -41,7 +42,7 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     return () => {
       for (const terminal of terminals) {
-        window.context.killTerminal(terminal.id);
+        terminalService.killTerminal(terminal.id);
       }
       setTerminals([]);
       setActiveTerminalId("");
@@ -57,7 +58,7 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       name: terminalType.toLowerCase(),
       terminalType
     };
-    window.context.createTerminal(newId, null, null, rootFolderPath!);
+    terminalService.createTerminal(newId, null, null, rootFolderPath!);
     setTerminals(prevTerminals => [...prevTerminals, newTerminal])
     setActiveTerminalId(newId)
   }, [terminals])

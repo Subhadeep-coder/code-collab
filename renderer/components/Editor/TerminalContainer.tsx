@@ -1,7 +1,12 @@
 import { useTerminalContext } from "providers/terminal-provider"
 import { TerminalTopbar } from "./Terminal/TerminalTopbar"
-import { Terminal } from "./Terminal/Terminal"
+// import { Terminal } from "./Terminal/Terminal"
 import { TerminalSidebar } from "./Terminal/TerminalSidebar"
+import dynamic from "next/dynamic"
+
+const Terminal = dynamic({
+  loader: () => import("./Terminal/Terminal").then((mod) => mod.Terminal)
+}, { ssr: false });
 
 export const TerminalContainer: React.FC = () => {
   const { terminals, activeTerminalId } = useTerminalContext()
@@ -18,7 +23,7 @@ export const TerminalContainer: React.FC = () => {
                 <Terminal
                   key={terminal.id}
                   terminalId={terminal.id}
-                  // className={`flex-grow ${activeTerminalId === terminal.id ? "" : "hidden"}`}
+                // className={`flex-grow ${activeTerminalId === terminal.id ? "" : "hidden"}`}
 
                 />
               );
