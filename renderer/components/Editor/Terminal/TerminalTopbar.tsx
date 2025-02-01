@@ -16,17 +16,18 @@ export const TerminalTopbar: React.FC = () => {
   return (
     <div className='flex h-9 items-center justify-between bg-[#1e1e1e] text-[#cccccc] '>
       <div className='flex h-full items-center'>
-        {topbarElements.map((element) => (
-          <button
-            key={element.id}
-            className={`h-full px-4 text-sm font-medium hover:text-white ${
-              activeTopbarElement === element.id ? "text-white border-b border-[#686984]" : "text-gray-500"
-            }`}
-            onClick={() => setActiveTopbarElement(element.id)}
-          >
-            {element.name}
-          </button>
-        ))}
+        {
+          topbarElements.map((element) => (
+            <button
+              key={element.id}
+              className={`h-full px-4 text-sm font-medium hover:text-white ${activeTopbarElement === element.id ? "text-white border-b border-[#686984]" : "text-gray-500"
+                }`}
+              onClick={() => setActiveTopbarElement(element.id)}
+            >
+              {element.name}
+            </button>
+          ))
+        }
       </div>
       <div className='flex items-center pr-2'>
         <button

@@ -1,7 +1,7 @@
 import { OpenFile, OpenFolder } from 'types/file-functions'
 import { IpcHandler } from '../main/preload'
 import { GetUserDetails, Login, Logout } from './types/auth-functions'
-import { RunCommand } from 'types/terminal-functions'
+import { CreateTerminal, GetCommandOutput, GetTerminalLogs, KillTerminal, ResizeTerminal, RunCommand } from 'types/terminal-functions'
 
 declare global {
   interface Window {
@@ -16,10 +16,13 @@ declare global {
       deleteFolder: Function,
       openFile: OpenFile,
       openFolder: OpenFolder,
+      createTerminal: CreateTerminal,
+      getTerminalLogs: GetTerminalLogs,
       runCommand: RunCommand,
-      getCommandOutput: (cb: (event: Electron.IpcRendererEvent, data: any) => void) => void,
-      removeCommandOutputListeners: () => void,
-      getProcessDone: (cb: (event: Electron.IpcRendererEvent, data: any) => void) => void,
+      resizeTerminal: ResizeTerminal,
+      getCommandOutput: (cb: GetCommandOutput) => void,
+      removeListner: (cb: GetCommandOutput) => void,
+      killTerminal: KillTerminal,
     }
   }
 }

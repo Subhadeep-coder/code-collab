@@ -11,15 +11,19 @@ export const TerminalContainer: React.FC = () => {
       <div className="flex-grow flex flex-col pr-4">
         <TerminalTopbar />
         <div className="flex flex-grow">
-          {/* Render only the active terminal */}
-          {terminals.map((terminal) => (
-              <Terminal 
-                key={terminal.id} 
-                terminalId={terminal.id} 
-                className={`flex-grow ${activeTerminalId === terminal.id ? "" : "hidden"}`}
-                 
-              />
-          ))}
+          {
+            terminals.map((terminal) => {
+
+              return terminal.id === activeTerminalId && (
+                <Terminal
+                  key={terminal.id}
+                  terminalId={terminal.id}
+                  // className={`flex-grow ${activeTerminalId === terminal.id ? "" : "hidden"}`}
+
+                />
+              );
+            })
+          }
           <TerminalSidebar />
         </div>
       </div>

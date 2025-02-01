@@ -1,12 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from 'react'
-
-// Define the shape of a Terminal
-type TerminalType = {
-  id: string
-  name: string
-}
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react'
+import { Terminal, TerminalType } from 'types/terminal-functions';
 
 // Define the shape of the context
 type TerminalContextType = {
@@ -22,14 +17,36 @@ const TerminalContext = createContext<TerminalContextType | undefined>(undefined
 
 // Create a provider component
 export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [terminals, setTerminals] = useState<TerminalType[]>([
-    { id: "powershell", name: "powershell" }
-  ])
-  const [activeTerminalId, setActiveTerminalId] = useState<string>("powershell")
+  const [terminals, setTerminals] = useState<TerminalType[]>([])
+  const [activeTerminalId, setActiveTerminalId] = useState<string>("")
+
+  useEffect(() => {
+    const createTerminal = () => {
+      const newId = `terminal-${terminals.length + 1}`
+      const terminalType: Terminal = "POWERSHELL";
+      const newTerminal: TerminalType = {
+        id: newId,
+        name: terminalType.toLowerCase(),
+        terminalType
+      };
+      window.context.createTerminal(newId);
+      setTerminals(prevTerminals => [...prevTerminals, newTerminal])
+      setActiveTerminalId(newId)
+    }
+
+    createTerminal();
+  }, [])
+
 
   const addTerminal = useCallback(() => {
     const newId = `terminal-${terminals.length + 1}`
-    const newTerminal = { id: newId, name: `powershell` }
+    const terminalType: Terminal = "POWERSHELL";
+    const newTerminal: TerminalType = {
+      id: newId,
+      name: terminalType.toLowerCase(),
+      terminalType
+    };
+    window.context.createTerminal(newId);
     setTerminals(prevTerminals => [...prevTerminals, newTerminal])
     setActiveTerminalId(newId)
   }, [terminals])

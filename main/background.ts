@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 import { electronFileService } from "./helpers/file-functions";
 import { CreateFolder, OpenFile } from "./types/file-functions";
 import { electronTerminalService } from "./helpers/terminal-functions";
-import { RunCommand } from "./types/terminal-functions";
+import { CreateTerminal, GetTerminalLogs, KillTerminal, ResizeTerminal, RunCommand } from "./types/terminal-functions";
 
 dotenv.config();
 
@@ -83,6 +83,29 @@ app.whenReady().then(async () => {
   ipcMain.handle("delete-folder", async (_, folderPath: string) => {
     return electronFileService.deleteFolder(mainWindow, folderPath);
   });
+
+  ipcMain.handle('create:terminal', (_, ...args: Parameters<CreateTerminal>) => {
+    return electronTerminalService.createTerminal(...args);
+  });
+
+  // Provide the complete log history for a terminal.
+  ipcMain.handle('get:terminal:logs', async (_, ...args: Parameters<GetTerminalLogs>) => {
+    return (await electronTerminalService.getTerminalLogs(...args));
+  });
+
+  // Send data from the renderer to the shell.
+  ipcMain.on('run:command', (_, ...args: Parameters<RunCommand>) => {
+    electronTerminalService.runCommand(...args);
+  });
+
+  // Resize the terminal as needed.
+  ipcMain.on('resize:terminal', (_, ...args: Parameters<ResizeTerminal>) => {
+    electronTerminalService.resizeTerminal(...args);
+  });
+
+  ipcMain.handle("kill:terminal", (_, ...args: Parameters<KillTerminal>) => {
+    return electronTerminalService.killTerminal(...args);
+  })
 
   // Reactivate app on macOS
   app.on("activate", function () {
