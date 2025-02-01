@@ -6,7 +6,7 @@ export type TerminalType = {
     terminalType: Terminal;
 };
 
-export type CreateTerminal = (termId: string, shell?: any, args?: any, options?: Object) => string;
+export type CreateTerminal = (termId: string, shell?: any, args?: any, rootPath?: string) => string;
 export type GetTerminalLogs = (terminalId: string) => Promise<string>;
 export type RunCommand = (termId: string, command: string) => void;
 export type ResizeTerminal = (termId: string, cols: number, rows: number) => void;

@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react'
 import { Terminal, TerminalType } from 'types/terminal-functions';
+import { useFileContext } from './file-provider';
 
 // Define the shape of the context
 type TerminalContextType = {
@@ -17,8 +18,9 @@ const TerminalContext = createContext<TerminalContextType | undefined>(undefined
 
 // Create a provider component
 export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [terminals, setTerminals] = useState<TerminalType[]>([])
-  const [activeTerminalId, setActiveTerminalId] = useState<string>("")
+  const [terminals, setTerminals] = useState<TerminalType[]>([]);
+  const [activeTerminalId, setActiveTerminalId] = useState<string>("");
+  const { rootFolderPath } = useFileContext();
 
   useEffect(() => {
     const createTerminal = () => {
@@ -29,13 +31,22 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         name: terminalType.toLowerCase(),
         terminalType
       };
-      window.context.createTerminal(newId);
+      console.log("Selected folder:" + rootFolderPath);
+      window.context.createTerminal(newId, null, null, rootFolderPath!);
       setTerminals(prevTerminals => [...prevTerminals, newTerminal])
       setActiveTerminalId(newId)
     }
 
     createTerminal();
-  }, [])
+
+    return () => {
+      for (const terminal of terminals) {
+        window.context.killTerminal(terminal.id);
+      }
+      setTerminals([]);
+      setActiveTerminalId("");
+    }
+  }, [rootFolderPath])
 
 
   const addTerminal = useCallback(() => {
@@ -46,7 +57,7 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       name: terminalType.toLowerCase(),
       terminalType
     };
-    window.context.createTerminal(newId);
+    window.context.createTerminal(newId, null, null, rootFolderPath!);
     setTerminals(prevTerminals => [...prevTerminals, newTerminal])
     setActiveTerminalId(newId)
   }, [terminals])

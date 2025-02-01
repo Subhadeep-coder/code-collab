@@ -18,12 +18,13 @@ export const Explorer = () => {
     selectedFile,
     setSelectedFile,
     addRecentFile,
+    setRootFolderPath,
   } = useFileContext();
 
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const [selectedFolderPath, setSelectedFolderPath] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -49,6 +50,8 @@ export const Explorer = () => {
     if (result.success) {
       setSelectedFolder(result.rootFolderName);
       setFolderStructure(result.folderStructure);
+      setRootFolderPath(result.folderPath);
+
     }
   }
 
@@ -66,7 +69,7 @@ export const Explorer = () => {
     try {
       // Add this method to your preload/main process
       const result = await window.context.deleteFolder(selectedFolderPath);
-      
+
       if (result.success) {
         toast.success(result.message || "Folder deleted successfully");
         if (result.folderStructure) {
@@ -92,19 +95,19 @@ export const Explorer = () => {
       const fileName = result.fileName;
       const extension = filePath.split('.').pop() || '';
 
-      setSelectedFile({ 
-        name: fileName, 
-        content: fileContent, 
-        path: filePath, 
-        isSave: true, 
-        extension 
+      setSelectedFile({
+        name: fileName,
+        content: fileContent,
+        path: filePath,
+        isSave: true,
+        extension
       });
-      addRecentFile({ 
-        name: fileName, 
-        content: fileContent, 
-        path: filePath, 
-        isSave: true, 
-        extension 
+      addRecentFile({
+        name: fileName,
+        content: fileContent,
+        path: filePath,
+        isSave: true,
+        extension
       });
     }
   }
@@ -118,7 +121,7 @@ export const Explorer = () => {
     setIsLoading(true);
     try {
       const result = await window.context.createFolder(newFolderName);
-      
+
       if (result.success) {
         toast.success(result.message);
         if (result.folderStructure) {
@@ -174,19 +177,19 @@ export const Explorer = () => {
 
   const handleFileSelect = (name: string, content: string, filePath: string) => {
     const extension = filePath.split('.').pop() || '';
-    setSelectedFile({ 
-      name, 
-      content, 
-      path: filePath, 
-      isSave: true, 
-      extension 
+    setSelectedFile({
+      name,
+      content,
+      path: filePath,
+      isSave: true,
+      extension
     });
-    addRecentFile({ 
-      name, 
-      content, 
-      path: filePath, 
-      isSave: true, 
-      extension 
+    addRecentFile({
+      name,
+      content,
+      path: filePath,
+      isSave: true,
+      extension
     });
   }
 
@@ -202,7 +205,7 @@ export const Explorer = () => {
   return (
     <div className="text-[#CCCCCC]">
       <div className="flex items-center justify-between cursor-pointer hover:bg-[#2C2C2C] p-1">
-        <div 
+        <div
           className="flex items-center"
           onClick={() => toggleExpandedFolder("explorer")}
         >

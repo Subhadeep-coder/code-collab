@@ -11,12 +11,14 @@ export interface File {
 }
 
 interface FileContextType {
+  rootFolderPath: string | null;
   selectedFolder: string | null;
   folderStructure: FileNode[] | null;
   selectedFile: File | null;
   expandedFolders: Set<string>;
   recentFiles: File[];
   selectedFolderPath: string | null;  // New state for tracking selected folder for deletion
+  setRootFolderPath: (path: string) => void;
   setSelectedFolder: (folder: string | null) => void;
   setFolderStructure: (structure: FileNode[] | null) => void;
   setSelectedFile: (file: File | null) => void;
@@ -31,6 +33,7 @@ interface FileContextType {
 const FileContext = createContext<FileContextType | undefined>(undefined);
 
 export const FileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [rootFolderPath, setRootFolderPath] = useState<string | null>(null);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(["explorer"]));
   const [recentFiles, setRecentFiles] = useState<File[]>([]);
@@ -78,12 +81,14 @@ export const FileProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   return (
     <FileContext.Provider
       value={{
+        rootFolderPath,
         selectedFolder,
         folderStructure,
         selectedFile,
         expandedFolders,
         recentFiles,
         selectedFolderPath,  // Add to context value
+        setRootFolderPath,
         setSelectedFolder,
         setFolderStructure,
         setSelectedFile,
