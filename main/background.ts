@@ -1,5 +1,5 @@
 import path from "path";
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, screen } from "electron";
 import serve from "electron-serve";
 import { createWindow, electronAuthService } from "./helpers";
 import { electronApp, optimizer } from "@electron-toolkit/utils";
@@ -20,6 +20,44 @@ if (isProd) {
   app.setPath("userData", `${app.getPath("userData")} (development)`);
 }
 
+// Authentication IPC handlers
+ipcMain.handle("user:register", (_, ...args: Parameters<Login>) =>
+  electronAuthService.register(...args)
+);
+ipcMain.handle("user:login", (_, ...args: Parameters<Login>) =>
+  electronAuthService.login(...args)
+);
+ipcMain.handle("user:logout", (_, ...args: Parameters<Logout>) =>
+  electronAuthService.logout(...args)
+);
+ipcMain.handle("user:get-details", (_, ...args: Parameters<GetUserDetails>) =>
+  electronAuthService.getCurrentUser(...args)
+);
+
+// Terminal IPC handlers
+ipcMain.handle('create:terminal', (_, ...args: Parameters<CreateTerminal>) => {
+  return electronTerminalService.createTerminal(...args);
+});
+
+// Provide the complete log history for a terminal.
+ipcMain.handle('get:terminal:logs', async (_, ...args: Parameters<GetTerminalLogs>) => {
+  return (await electronTerminalService.getTerminalLogs(...args));
+});
+
+// Send data from the renderer to the shell.
+ipcMain.on('run:command', (_, ...args: Parameters<RunCommand>) => {
+  electronTerminalService.runCommand(...args);
+});
+
+// Resize the terminal as needed.
+ipcMain.on('resize:terminal', (_, ...args: Parameters<ResizeTerminal>) => {
+  electronTerminalService.resizeTerminal(...args);
+});
+
+ipcMain.handle("kill:terminal", (_, ...args: Parameters<KillTerminal>) => {
+  return electronTerminalService.killTerminal(...args);
+});
+
 app.whenReady().then(async () => {
   // Set app user model id for Windows
   electronApp.setAppUserModelId("com.electron");
@@ -30,17 +68,29 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window);
   });
 
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   // Initialize the main window
+  let preloadPath: string;
+  if (isProd) {
+    // preloadPath = path.join(process.resourcesPath, "app", "preload.js");
+    preloadPath = path.join(__dirname, "preload.js");
+  } else {
+    preloadPath = path.join(__dirname, "preload.js");
+  }
   const mainWindow = createWindow("main", {
-    width: 1000,
-    height: 600,
+    width: width,
+    height: height,
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: preloadPath,
     },
   });
 
-  mainWindow.maximize();
-
+  // mainWindow.maximize();
+  console.log("Preload script loaded successfully.");
+  if (process.argv.includes('--debug')) {
+    mainWindow.webContents.openDevTools();
+  }
+  app.commandLine.appendSwitch('remote-debugging-port', '9222');
   if (isProd) {
     await mainWindow.loadURL("app://./");
   } else {
@@ -48,19 +98,6 @@ app.whenReady().then(async () => {
     await mainWindow.loadURL(`http://localhost:${port}`);
   }
 
-  // Authentication IPC handlers
-  ipcMain.handle("user:register", (_, ...args: Parameters<Login>) =>
-    electronAuthService.register(...args)
-  );
-  ipcMain.handle("user:login", (_, ...args: Parameters<Login>) =>
-    electronAuthService.login(...args)
-  );
-  ipcMain.handle("user:logout", (_, ...args: Parameters<Logout>) =>
-    electronAuthService.logout(...args)
-  );
-  ipcMain.handle("user:get-details", (_, ...args: Parameters<GetUserDetails>) =>
-    electronAuthService.getCurrentUser(...args)
-  );
 
   ipcMain.handle(
     "file:create",
@@ -84,28 +121,7 @@ app.whenReady().then(async () => {
     return electronFileService.deleteFolder(mainWindow, folderPath);
   });
 
-  ipcMain.handle('create:terminal', (_, ...args: Parameters<CreateTerminal>) => {
-    return electronTerminalService.createTerminal(...args);
-  });
 
-  // Provide the complete log history for a terminal.
-  ipcMain.handle('get:terminal:logs', async (_, ...args: Parameters<GetTerminalLogs>) => {
-    return (await electronTerminalService.getTerminalLogs(...args));
-  });
-
-  // Send data from the renderer to the shell.
-  ipcMain.on('run:command', (_, ...args: Parameters<RunCommand>) => {
-    electronTerminalService.runCommand(...args);
-  });
-
-  // Resize the terminal as needed.
-  ipcMain.on('resize:terminal', (_, ...args: Parameters<ResizeTerminal>) => {
-    electronTerminalService.resizeTerminal(...args);
-  });
-
-  ipcMain.handle("kill:terminal", (_, ...args: Parameters<KillTerminal>) => {
-    return electronTerminalService.killTerminal(...args);
-  })
 
   // Reactivate app on macOS
   app.on("activate", function () {

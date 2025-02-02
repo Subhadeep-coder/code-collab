@@ -9,7 +9,7 @@ class ElectronAuthService {
 
     constructor() {
         // Initialize Supabase client
-        dotenv.config({ path: path.resolve(__dirname, '../.env') });
+        dotenv.config({ path: path.resolve(__dirname, './.env') });
         this.client = createClient(
             process.env.SUPABASE_URL || '',
             process.env.SUPABASE_ANON_KEY || '',

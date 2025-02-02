@@ -21,12 +21,13 @@ export class TerminalService {
         window.context.removeListner(cb);
     }
 
-    createTerminal(id: string, shell: any, args: any, rootPath: string) {
+    async createTerminal(id: string, shell: any, args: any, rootPath: string) {
         window.context.createTerminal(id, shell, shell, rootPath!);
     }
 
     killTerminal(id: string) {
-        window.context.killTerminal(id);
+        const result = window.context.killTerminal(id);
+        return result;
     }
 }
 

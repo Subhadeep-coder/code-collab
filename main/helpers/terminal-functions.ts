@@ -1,109 +1,101 @@
+// terminal-service.ts
 import os from "os";
 import { app, BrowserWindow } from "electron";
 import { CreateTerminal, GetTerminalLogs, KillTerminal, ResizeTerminal, RunCommand } from "../types/terminal-functions";
-import { ChildProcess, fork } from "child_process";
-import path from "path";
+import { IPty, spawn } from "node-pty";
 
 interface TerminalMap {
-    [termId: string]: ChildProcess;
+    [termId: string]: IPty;
 }
 
 interface TerminalLogMap {
     [termId: string]: string;
 }
 
-
 class TerminalService {
     private terminals: TerminalMap;
     private terminalLogs: TerminalLogMap;
+
     constructor() {
         this.terminals = {};
         this.terminalLogs = {};
     }
 
+    /**
+     * Creates a new terminal instance.
+     * Instead of forking a worker, we directly spawn a PTY process.
+     */
     createTerminal: CreateTerminal = (termId, shell, args, rootPath) => {
-        console.log("Creating terminal with id:", termId, rootPath);
-        // Set default shell and options if needed.
-        const ced = rootPath === null ? process.env.HOME : rootPath;
+        // Determine working directory; use rootPath if provided otherwise fallback to HOME.
+        const cwd = rootPath === null ? process.env.HOME || "" : rootPath;
+        // Set default shell if not provided.
         shell = shell || (os.platform() === "win32" ? "powershell.exe" : "bash");
+        // Configure options for the PTY.
         const options = {
             name: "xterm-color",
             cols: 80,
             rows: 24,
-            cwd: ced,
+            cwd: process.env.HOME,
             env: process.env,
+            // On Windows, setting useConpty to false if you encounter issues.
             useConpty: false,
         };
-        console.log(options);
-        const workerPath = process.env.NODE_ENV === "development"
-            ? path.join(app.getAppPath(), "main", "helpers", "ptyworker.js")  // if in development your worker is in /main/helpers
-            : path.join(app.getAppPath(), "ptyWorker.js");
-        // Fork the worker process.
-        const worker = fork(workerPath);
 
-        // Store the worker and initialize log storage.
-        this.terminals[termId] = worker;
+        // Spawn the terminal directly in the main process.
+        const ptyProcess = spawn(shell, args || [], options);
+        this.terminals[termId] = ptyProcess;
         this.terminalLogs[termId] = "";
 
-        // Listen for messages from the worker.
-        worker.on("message", (msg: any) => {
-            switch (msg.type) {
-                case "data":
-                    {
-                        // Append received data to the terminal log.
-                        this.terminalLogs[termId] += msg.data;
-                        // Send output to the renderer.
-                        BrowserWindow.getAllWindows()[0]?.webContents.send(
-                            "command:output",
-                            termId,
-                            msg.data
-                        );
-                    }
-                    break;
-                case "killed":
-                    {
-                        // Optionally notify the renderer that this terminal is killed.
-                        BrowserWindow.getAllWindows()[0]?.webContents.send(
-                            "terminal:killed",
-                            termId
-                        );
-                    }
-                    break;
-                default:
-                    console.warn("Unknown message from pty worker:", msg);
-            }
+        // Listen for data from the PTY process.
+        ptyProcess.onData((data) => {
+            // Append data to the terminal's log.
+            this.terminalLogs[termId] += data;
+            // Send data to the renderer process.
+            BrowserWindow.getAllWindows()[0]?.webContents.send("command:output", termId, data);
         });
-
-        // Send an initialization message to the worker.
-        worker.send({ type: "init", termId, shell, args, options });
 
         return termId;
     }
 
+    /**
+     * Returns the logged output for a terminal.
+     */
     getTerminalLogs = (terminalId: string) => {
         return this.terminalLogs[terminalId] || "";
     }
 
+    /**
+     * Sends a command to the terminal.
+     */
     runCommand: RunCommand = (terminalId: string, command: string) => {
-        const worker = this.terminals[terminalId];
-        if (worker) {
-            worker.send({ type: "input", data: command });
+        const term = this.terminals[terminalId];
+        if (term) {
+            // Write the command to the terminal.
+            term.write(command);
         }
     }
 
+    /**
+     * Resizes the terminal.
+     */
     resizeTerminal: ResizeTerminal = (terminalId: string, cols: number, rows: number) => {
-        const worker = this.terminals[terminalId];
-        if (worker) {
-            worker.send({ type: "resize", cols, rows });
+        const term = this.terminals[terminalId];
+        if (term) {
+            term.resize(cols, rows);
         }
     }
 
+    /**
+     * Kills the terminal and cleans up resources.
+     */
     killTerminal: KillTerminal = (terminalId: string) => {
-        const worker = this.terminals[terminalId];
-        if (worker) {
-            worker.send({ type: "kill", termId: terminalId });
+        const term = this.terminals[terminalId];
+        if (term) {
+            term.kill();
             delete this.terminals[terminalId];
             delete this.terminalLogs[terminalId];
+            // Optionally, notify the renderer that the terminal has been killed.
+            BrowserWindow.getAllWindows()[0]?.webContents.send("terminal:killed", terminalId);
             return true;
         }
         return false;

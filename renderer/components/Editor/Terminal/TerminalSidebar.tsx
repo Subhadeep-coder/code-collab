@@ -1,3 +1,4 @@
+import { terminalService } from "lib/terminal-service";
 import { TerminalIcon, Trash } from "lucide-react";
 import { useTerminalContext } from "providers/terminal-provider";
 
@@ -5,7 +6,7 @@ export const TerminalSidebar: React.FC = () => {
   const { terminals, activeTerminalId, selectTerminal, removeTerminal } = useTerminalContext();
 
   const handleKillTerminal = (terminalId: string) => {
-    const success = window.context.killTerminal(terminalId);
+    const success = terminalService.killTerminal(terminalId);
     if (success) {
       removeTerminal(terminalId);
     }

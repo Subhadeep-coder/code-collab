@@ -24,7 +24,7 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const { rootFolderPath } = useFileContext();
 
   useEffect(() => {
-    const createTerminal = () => {
+    const createTerminal = async () => {
       const newId = `terminal-${terminals.length + 1}`
       const terminalType: Terminal = "POWERSHELL";
       const newTerminal: TerminalType = {
@@ -32,8 +32,8 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         name: terminalType.toLowerCase(),
         terminalType
       };
-      console.log("Selected folder:" + rootFolderPath);
-      terminalService.createTerminal(newId, null, null, rootFolderPath!);
+
+      await terminalService.createTerminal(newId, null, null, rootFolderPath!);
       setTerminals(prevTerminals => [...prevTerminals, newTerminal])
       setActiveTerminalId(newId)
     }
